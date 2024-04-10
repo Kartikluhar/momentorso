@@ -1,0 +1,103 @@
+@media screen and (max-width: 1200px){
+    .about-us-part1 .about-us-part1-right {
+        height: 400px;
+    }
+    .about-us-part1 .about-us-part1-left {
+        margin-left: 0px;
+        padding-left: 10px;
+    }
+    .container .about-us-part3 .about-us-part3-content {
+        width: 90%;
+    }
+}
+
+@media screen and (max-width: 1030px){
+    .container .about-us-showcase .about-us-showcase-wrapper img {
+        margin: 0px;
+    }
+    .container .about-us-showcase .about-us-showcase-wrapper{
+        padding: 5px;
+    }
+}
+
+@media screen and (max-width: 1000px){
+    .container .about-us-part2 .about-us-part2-content .about-us-part2-left {
+        height: 300px;
+    }
+    .container .about-us-part2{
+        align-items: center;
+        padding: 50px 0;
+    }
+    .container .about-us-part2 .about-us-part2-content{
+        align-items: center;
+        min-height: 400px;
+    }
+}
+
+@media screen and (max-width: 900px){
+    .container .about-us-part2 .about-us-part2-content{
+        flex-direction: column-reverse;
+    }
+    .container .about-us-part2 .about-us-part2-content .about-us-part2-left{
+        width: 100%;
+        height: auto;
+    }
+    .container .about-us-part2 .about-us-part2-content .about-us-part2-right{
+        width: 100%;
+        height: auto;
+        padding: 50px 5px;
+    }
+    .container .about-us-part2 .about-us-part2-content .about-us-part2-left img{
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 960px){
+    .about-us-part1 {
+        flex-direction: column;
+    }
+    .about-us-part1 .about-us-part1-left {
+        width: 100%;
+        min-height: 400px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    .about-us-part1 .about-us-part1-right {
+        width: 100%;
+        margin-right: 0px;
+        height: 500px;
+    }
+}
+@media screen and (max-width: 550px){
+    .about-us-part1 .about-us-part1-right {
+        height: 400px;
+    }
+    .container .about-us-part2 .about-us-part2-content .about-us-part2-right h1 {
+        margin-left: 10px;
+    }
+    .container .about-us-part2 .about-us-part2-content .about-us-part2-right p {
+        margin-left: 10px;
+    }
+}
+@media screen and (max-width: 515px){
+    .about-us-part1 .about-us-part1-left h1{
+        font-size: 5rem;
+    }
+    .container .about-us-part3 .about-us-part3-content {
+        width: 95%;
+    }
+}
+@media screen and (max-width: 430px){
+    .about-us-part1 .about-us-part1-left h1{
+        font-size: 3rem;
+    }
+    .about-us-part1 .about-us-part1-right {
+        height: 300px;
+    }
+}
+@media screen and (max-width: 490px){
+    .about-us-part2-content .about-us-part2-right h1 {
+        font-size: 1.7rem;
+    }
+}

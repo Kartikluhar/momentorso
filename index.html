@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styles/navbar.css">
+    <link rel="shortcut icon" href="images/logo.jpeg" type="image/x-icon">
+    <link rel="stylesheet" href="styles/form.css">
+    <link rel="stylesheet" href="styles/footer.css">
+    <link rel="stylesheet" href="media queries/home.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css"
+        integrity="sha512-+EoPw+Fiwh6eSeRK7zwIKG2MA8i3rV/DGa3tdttQGgWyatG/SkncT53KHQaS5Jh9MNOT3dmFL0FjTY08And/Cw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="styles/imageSlider.css">
+    <script src="scripts/script.js" defer></script>
+    <script src="scripts/imageSlider.js" defer></script>
+    <title>Momentorso | One Stop Solution</title>
+</head>
+
+<body class="body">
+    <div class="container">
+        <!-- navbar of website -->
+        <!-- <div class="cursor" id="cursor" onmousemove="mousemove()"></div> -->
+        <header class="header">
+            <nav class="navbar" id="navbar">
+                <img src="images/logo.png" class="logo" alt="my logo">
+                <button class="toggle-button" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
+                <ul class="menu" id="menu">
+                    <li class="menu-li"><a href="index.html" class="menu-links">HOME</a></li>
+                    <li class="menu-li"><a href="about.html" class="menu-links">ABOUT US</a></li>
+                    <li class="menu-li"><a href="#" class="menu-links">SERVICES</a></li>
+                    <li class="menu-li"><a href="#" class="menu-links">PROJECTS</a></li>
+                    <li class="menu-li"><a href="#" class="menu-links">CONTACT</a></li>
+                </ul>
+            </nav>
+        </header>
+        <!-- end of navbar -->
+        <main class="main">
+            <div class="part1">
+                <div class="part1-content">
+                    <h1>Every day is a journey, and the journey itself is home.</h1>
+                    <div class="line"></div>
+                    <p class="prat1-content-para"><strong>Life's experiences shape our sense of belonging.
+                            Rather than seeking a fixed destination, we find comfort and familiarity in the process of
+                            living.
+                            Home is not merely a physical place but also the evolving journey we undertake each
+                            day.</strong></p>
+                </div>
+            </div>
+            <div class="part2">
+                <div class="part2-content">
+                    <div class="part2-left">
+                        <h1>We Make Your Dream Come True.</h1>
+                        <p>Expertly designing spaces, assuring functionality and comfort with a touch of Art & Science.
+                            An astounding interior, from foundation to finishing, for a living experience that truly
+                            reflects you.</p>
+                        <h4><a href="about.html">About us>></a></h4>
+                    </div>
+                    <div class="part2-right">
+                        <img src="images/interior1.jpg" class="part2-right-img">
+                    </div>
+                </div>
+                <div class="part2-content">
+                    <div class="part2-right">
+                        <img src="images/interior3.avif" class="part2-right-img">
+                    </div>
+                    <div class="part2-left">
+                        <h1>Believe in the journey, for every story eventually finds its home.</h1>
+                        <p>Start a new chapter of serenity, modernity and warmth. Our real estate offerings make spaces
+                            that not just look good, but also boost happiness and make life better.</p>
+                        <h4><a href="#">Contact us>></a></h4>
+                        <!-- <div class="part2-left-img-c">
+                            <img src="images/interior2.jpg">
+                            <img src="images/interior6.jpg">
+                            <img src="images/interior3.avif">
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+            <div class="part3">
+                <div class="part3-content">
+                    <div class="part3-left">
+                        <h1>RECENT INTERIOR WORKS</h1>
+                        <p>Nothing portrays a truer picture than the success stories of recent projects. Scroll your
+                            eyes through our ‘Recent Projects’ to have a glimpse out of the ordinary. Your Dreams – Our
+                            Achievements.</p>
+                        <h4><a href="#">Our Recent Projects>></a></h4>
+                    </div>
+                    <div class="part3-right">
+                        <div class="image-c">
+                            <button class="slider-button left" onclick="plusSlides(-1)">&#10094;</button>
+                            <button class="slider-button right" onclick="plusSlides(1)">&#10095;</button>
+                            <div class="image-wrapper fade">
+                                <img src="images/interior3.avif" class="image-wrapper-img">
+                            </div>
+                            <div class="image-wrapper fade">
+                                <img src="images/interior1.jpg" class="image-wrapper-img">
+                            </div>
+                            <div class="image-wrapper fade">
+                                <img src="images/interior2.jpg" class="image-wrapper-img">
+                            </div>
+                        </div>
+                        <!-- <img src="images/interior3.avif" class="part3-right-img"> -->
+                    </div>
+                </div>
+            </div>
+            <!-- some photos -->
+
+            <!-- <div class="image-gallery-container">
+                <div class="image-gallery">
+                    <div class="images">
+                        <a href="images/interior1.jpg" class="img-a">
+                            <img src="images/interior1.jpg" alt="" class="img-g">
+                        </a>
+                    </div>
+                    <div class="images">
+                        <a href="images/interior2.jpg" class="img-a">
+                            <img src="images/interior2.jpg" alt="" class="img-g">
+                        </a>
+                    </div>
+                    <div class="images">
+                        <a href="images/interior3.avif" class="img-a">
+                            <img src="images/interior3.avif" alt="" class="img-g">
+                        </a>
+                    </div>
+                </div>
+            </div> -->
+            <div class="image-gallery-container">
+                <div class="image-gallery">
+                    <a href="images/interior1.jpg" class="img-a">
+                        <img src="images/interior1.jpg" alt="" class="img-g">
+                    </a>
+                    <a href="images/interior2.jpg" class="img-a">
+                        <img src="images/interior2.jpg" alt="" class="img-g">
+                    </a>
+                    <a href="images/interior3.avif" class="img-a">
+                        <img src="images/interior3.avif" alt="" class="img-g">
+                    </a>
+                </div>
+            </div>
+            <!-- end of some photos -->
+
+            <div class="form-container">
+                <div class="form-heading">
+                    <h1>Get In Touch</h1>
+                    <p><strong>Leave your name and email below along with what you are looking for in the message box.
+                            Or you can call us at +91 72279 95151.</strong></p>
+                </div>
+                <form action="" class="form">
+                    <div class="form-group">
+                        <input type="text" class="form-input" placeholder="Name" required>
+                        <input type="email" class="form-input" placeholder="Email (optional)">
+                    </div>
+                    <div class="form-group">
+                        <input type="number" name="" id="" class="form-input" placeholder="Mobile Number" required>
+                    </div>
+                    <div class="form-group">
+                        <textarea name="" placeholder="Message" id="" class="textarea" cols="30" rows="10"
+                            required></textarea>
+                    </div>
+                    <div class="form-group-button">
+                        <button type="reset" class="form-reset">Reset</button>
+                        <button type="submit" class="form-submit">Submit</button>
+                    </div>
+                </form>
+            </div>
+            <div class="footer1">
+                <div class="footer1-content">
+                    <div class="footer1-content-1">
+                        <h4>MOMENTORSO</h4>
+                        <p><small>Momentoso is where real estate meets artistry. We’re not just a company, but
+                                definitely your partners in creating the perfect living experience. Momentorso believes
+                                in the old proverb “Every space has the potential to be a canvas for a
+                                masterpiece.”</small></p>
+                    </div>
+                    <div class="footer1-content-2">
+                        <h4>Quick Links</h4>
+                        <ul>
+                            <li>
+                                <a href="/">Home</a>
+                            </li>
+                            <li>
+                                <a href="about.html">About Us</a>
+                            </li>
+                            <li>
+                                <a href="#">Services</a>
+                            </li>
+                            <li>
+                                <a href="#">Contact</a>
+                            </li>
+                            <li>
+                                <a href="#">Projects</a>
+                            </li>
+                            <li>
+                                <a href="#">Gallery</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="footer1-content-3">
+                        <h4>Contact</h4>
+                        <div>
+                            <p class="email">Email: info@momentorso.com</p>
+                            <p class="phone">Phone: +91 72279 95151</p>
+                            <p class="address">Address: Shop – 210, Ganesh Glory 11, Jagatpur Rd, Gota, Ahmedabad,
+                                Gujarat 382481</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <footer class="footer2">
+            <div class="footer2-content">
+                <h4>&copy; 2023 MOMENTORSO - All Right Reserved</h4>
+            </div>
+        </footer>
+    </div>
+
+    <!-- scripts -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"
+        integrity="sha512-IsNh5E3eYy3tr/JiX2Yx4vsCujtkhwl7SLqgnwLNgf04Hrt9BT9SXlLlZlWx+OK4ndzAoALhsMNcCmkggjZB1w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        $(document).ready(function () {
+            $('.image-gallery').magnificPopup({
+                delegate: 'a', // child items selector, by clicking on it popup will open
+                type: 'image',
+                // other options
+                // gallery : {
+                //     enabled : true
+                // }
+            });
+        });
+    </script>
+
+    <!-- end of all scripts -->
+</body>
+
+</html>

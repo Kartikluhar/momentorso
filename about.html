@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles/navbar.css">
+    <link rel="shortcut icon" href="images/logo.jpeg" type="image/x-icon">
+    <link rel="stylesheet" href="styles/footer.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="aboutUs.css">
+    <link rel="stylesheet" href="media queries/about.css">
+    <link rel="stylesheet" href="styles/imageSlider.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css"
+        integrity="sha512-+EoPw+Fiwh6eSeRK7zwIKG2MA8i3rV/DGa3tdttQGgWyatG/SkncT53KHQaS5Jh9MNOT3dmFL0FjTY08And/Cw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="scripts/aboutUsScript.js" defer></script>
+    <script src="scripts/imageSlider.js" defer></script>
+    <title>About Us | Momentorso</title>
+</head>
+<body>
+    <div class="container">
+        <!-- navbar of website -->
+        <header class="header">
+            <nav class="about-us-navbar" id="about-us-navbar">
+                <img src="images/logo.png" class="logo" alt="my logo">
+                <button class="toggle-button" id="toggle-button" onclick="abouttoggleMenu()"><i class="fa-solid fa-bars"></i></button>
+                <ul class="menu" id="menu">
+                    <li class="menu-li"><a href="/" class="menu-links">HOME</a></li>
+                    <li class="menu-li"><a href="about.html" class="menu-links">ABOUT US</a></li>
+                    <li class="menu-li"><a href="#" class="menu-links">SERVICES</a></li>
+                    <li class="menu-li"><a href="#" class="menu-links">PROJECTS</a></li>
+                    <li class="menu-li"><a href="#" class="menu-links">CONTACT</a></li>
+                </ul>
+            </nav>
+        </header>
+        <div class="about-us-part1">
+            <div class="about-us-part1-left">
+                <h1>About Us</h1>
+                <p>At Momentorso, Step out of the ordinary and Welcome beyond-the-pale experiences.</p>
+                <br>
+                <hr class="hr-line">
+            </div>
+            <div class="about-us-part1-right">
+                <div class="image-c">
+                    <button class="slider-button left" onclick="plusSlides(-1)">&#10094;</button>
+                    <button class="slider-button right" onclick="plusSlides(1)">&#10095;</button>
+                    <div class="image-wrapper fade">
+                        <img src="images/interior3.avif" class="image-wrapper-img">
+                    </div>
+                    <div class="image-wrapper fade">
+                        <img src="images/interior1.jpg" class="image-wrapper-img">
+                    </div>
+                    <div class="image-wrapper fade">
+                        <img src="images/interior2.jpg" class="image-wrapper-img">
+                    </div>
+                </div>          
+            </div>
+        </div>
+        <div class="about-us-part2">
+            <div class="about-us-part2-content">
+                <div class="about-us-part2-left">
+                    <img src="images/background.avif">
+                </div>
+                <div class="about-us-part2-right">
+                    <h1>Why do we stand out from the crowd?</h1>
+                    <p>We pay utter attention to detailed work and dedication to delivering outstanding results. Right from careful space planning and thoughtful furniture selection to unique material choices and gentle lighting design, we leave no stone unturned in crafting what you love. Our portfolio is a pure witness to our versatility, showcasing that we offer a unique blend of luxury and practicality, reflecting our adaptability to various design styles and requirements.</p>
+                </div>
+            </div>
+        </div>
+        <div class="about-us-part3">
+            <div class="about-us-part3-content">
+                <p>Momentoso is where real estate meets artistry. We’re not just a company, but definitely your partners in creating the perfect living experience. Momentorso believes in the old proverb “<span>Every space has the potential to be a canvas for a masterpiece.</span>” With an unbeatable passion for design and commitment to excellence, we set a mission to switch the usual spaces into captivating works of art that mirror the unique personalities and dreams of our clients.</p>
+                <br>
+                <p>We have a whole big team of skilled designers, architects and craftsmen who engage in close collaboration with each client. We spend a lot of time understanding their unique vision and work tirelessly to bring it to reality. What is amazing is that whether it is a cosy home, a bustling commercial space or a hospitality setup, we run every project with creativity, professionalism and commitment to a cut above the rest. </p>
+            </div>
+        </div>
+        <!-- <div class="about-us-showcase">
+            <div class="about-us-showcase-c">
+                <div class="about-us-gallery-img-c">
+                    <a href="images/background.avif" class="about-us-gallery-img-a">
+                        <img src="images/background.avif" alt="" class="about-us-gallery-img">
+                    </a>
+                </div>
+                <div class="about-us-gallery-img-c">
+                    <a href="images/interior1.jpg" class="about-us-gallery-img-a">
+                        <img src="images/interior1.jpg" alt="" class="about-us-gallery-img">
+                    </a>
+                </div>
+                <div class="about-us-gallery-img-c">
+                    <a href="images/interior2.jpg" class="about-us-gallery-img-a">
+                        <img src="images/interior2.jpg" alt="" class="about-us-gallery-img">
+                    </a>
+                </div>
+                <div class="about-us-gallery-img-c">
+                    <a href="images/interior3.avif" class="about-us-gallery-img-a">
+                        <img src="images/interior3.avif" alt="" class="about-us-gallery-img">
+                    </a>
+                </div>
+                <div class="about-us-gallery-img-c">
+                    <a href="images/interior4.jpeg" class="about-us-gallery-img-a">
+                        <img src="images/interior4.jpeg" alt="" class="about-us-gallery-img">
+                    </a>
+                </div>
+                <div class="about-us-gallery-img-c">
+                    <a href="images/interior5.jpg" class="about-us-gallery-img-a">
+                        <img src="images/interior5.jpg" alt="" class="about-us-gallery-img">
+                    </a>
+                </div>
+                <div class="about-us-gallery-img-c">
+                    <a href="images/interior6.jpg" class="about-us-gallery-img-a">
+                        <img src="images/interior6.jpg" alt="" class="about-us-gallery-img">
+                    </a>
+                </div>
+                <div class="about-us-gallery-img-c">
+                    <a href="images/background.avif" class="about-us-gallery-img-a">
+                        <img src="images/background.avif" alt="" class="about-us-gallery-img">
+                    </a>
+                </div>
+            </div>
+        </div> -->
+
+        <div class="about-us-showcase">
+            <div class="about-us-showcase-wrapper">
+                <a href="interior images/interior1.jpg">
+                    <img src="interior images/interior1.jpg">
+                </a>
+                <a href="interior images/interior2.jpeg">
+                    <img src="interior images/interior2.jpeg">
+                </a>
+                <a href="interior images/interior3.jpg">
+                    <img src="interior images/interior3.jpg">
+                </a>
+                <a href="interior images/interior4.jpeg">
+                    <img src="interior images/interior4.jpeg">
+                </a>
+                <a href="interior images/interior5.webp">
+                    <img src="interior images/interior5.webp">
+                </a>
+                <a href="interior images/interior6.webp">
+                    <img src="interior images/interior6.webp">
+                </a>
+            </div>
+        </div>
+
+        <div class="footer1">
+            <div class="footer1-content">
+                <div class="footer1-content-1">
+                    <h4>MOMENTORSO</h4>
+                    <p><small>Momentoso is where real estate meets artistry. We’re not just a company, but
+                            definitely your partners in creating the perfect living experience. Momentorso believes
+                            in the old proverb “Every space has the potential to be a canvas for a
+                            masterpiece.”</small></p>
+                </div>
+                <div class="footer1-content-2">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li>
+                            <a href="/">Home</a>
+                        </li>
+                        <li>
+                            <a href="about.html">About Us</a>
+                        </li>
+                        <li>
+                            <a href="#">Services</a>
+                        </li>
+                        <li>
+                            <a href="#">Contact</a>
+                        </li>
+                        <li>
+                            <a href="#">Projects</a>
+                        </li>
+                        <li>
+                            <a href="#">Gallery</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="footer1-content-3">
+                    <h4>Contact</h4>
+                    <div>
+                        <p class="email">Email: info@momentorso.com</p>
+                        <p class="phone">Phone: +91 72279 95151</p>
+                        <p class="address">Address: Shop – 210, Ganesh Glory 11, Jagatpur Rd, Gota, Ahmedabad,
+                            Gujarat 382481</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="footer2">
+            <div class="footer2-content">
+                <h4>&copy; 2023 MOMENTORSO - All Right Reserved</h4>
+            </div>
+        </footer>
+    </div>
+    <!-- scripts -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"
+        integrity="sha512-IsNh5E3eYy3tr/JiX2Yx4vsCujtkhwl7SLqgnwLNgf04Hrt9BT9SXlLlZlWx+OK4ndzAoALhsMNcCmkggjZB1w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        $('.about-us-showcase-wrapper').magnificPopup({
+            delegate: 'a', // child items selector, by clicking on it popup will open
+            type: 'image',
+            // other options
+            gallery : {
+                enabled : true
+            }
+        });
+    </script>
+
+    <!-- end of all scripts -->
+</body>
+</html>
