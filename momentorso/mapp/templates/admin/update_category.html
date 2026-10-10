@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="min-h-screen bg-[#0E0E0E] text-[#E5E2E1] p-32">
+
+  <!-- Header -->
+  <div class="mb-12">
+    <h1 class="text-4xl font-serif">Update Category</h1>
+    <p class="text-sm text-[#D1C5B4] mt-2 tracking-wide">
+      Structure your gallery with curated categories
+    </p>
+  </div>
+
+  <div class="grid lg:grid-cols-2 gap-16">
+
+    <!-- FORM -->
+    <div class="bg-[#1C1B1B] p-10 rounded-md relative">
+      <div class="absolute inset-0 bg-[#DDAD69] opacity-[0.04] blur-3xl"></div>
+
+      <form method="POST" enctype="multipart/form-data" class="relative z-10 space-y-8">
+        {% csrf_token %}
+
+        <h2 class="text-2xl font-semibold">Update Category</h2>
+
+        <!-- Image -->
+        <div class="space-y-2">
+          <label class="text-xs tracking-widest text-[#D1C5B4] uppercase">Image</label>
+          <input type="file" name="image"
+            class="w-full bg-[#2A2A2A] px-4 py-3 text-sm outline-none" accept="image/*" required>
+        </div>
+
+        <!-- Title -->
+        <div class="space-y-2">
+          <label class="text-xs tracking-widest text-[#D1C5B4] uppercase">Title</label>
+          <input type="text" name="title"
+            class="w-full bg-[#2A2A2A] px-4 py-3 outline-none focus:border-b-2 border-[#C9A45C]"
+            placeholder="Enter title" value="{{category.title}}" required>
+        </div>
+
+        <!-- Description -->
+        <div class="space-y-2">
+          <label class="text-xs tracking-widest text-[#D1C5B4] uppercase">Description</label>
+          <textarea name="description"
+            class="w-full bg-[#2A2A2A] px-4 py-3 outline-none focus:border-b-2 border-[#C9A45C]"
+            rows="4"
+            placeholder="Enter description">{{category.description}}</textarea>
+        </div>
+
+        <!-- Button -->
+        <button type="submit"
+          class="w-full py-3 text-sm font-medium tracking-wide text-[#261900] rounded-md 
+          bg-gradient-to-br from-[#E8C176] to-[#C9A45C] hover:scale-[1.02] transition">
+          Update Category
+        </button>
+
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

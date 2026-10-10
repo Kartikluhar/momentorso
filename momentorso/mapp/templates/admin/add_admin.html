@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="min-h-screen bg-[#0E0E0E] text-[#E5E2E1] p-32">
+
+  <!-- Header -->
+  <div class="mb-12">
+    <h1 class="text-4xl font-serif">Add Admin</h1>
+    <p class="text-sm text-[#D1C5B4] mt-2 tracking-wide">
+      Manage administrator access and permissions
+    </p>
+  </div>
+
+
+  <!-- Form + Table Layout -->
+  <div class="grid lg:grid-cols-2 gap-16">
+
+    <!-- LEFT: FORM -->
+    <div class="bg-[#1C1B1B] p-10 rounded-md relative">
+
+      <!-- Ambient Glow -->
+      <div class="absolute inset-0 bg-[#DDAD69] opacity-[0.04] blur-3xl"></div>
+
+      <form method="POST" class="relative z-10 space-y-8">
+        {% csrf_token %}
+
+        <!-- Title -->
+        <h2 class="text-2xl font-semibold">Create Admin</h2>
+
+        <!-- Username -->
+        <div class="space-y-2">
+          <label class="text-xs tracking-widest text-[#D1C5B4] uppercase">
+            Username
+          </label>
+          <input 
+            type="text" 
+            name="username"
+            class="w-full bg-[#2A2A2A] px-4 py-3 outline-none focus:border-b-2 border-[#C9A45C]"
+            placeholder="Enter username"
+            required
+          >
+        </div>
+
+        <!-- Email -->
+        {% comment %} <div class="space-y-2">
+          <label class="text-xs tracking-widest text-[#D1C5B4] uppercase">
+            Email
+          </label>
+          <input 
+            type="email" 
+            name="email"
+            class="w-full bg-[#2A2A2A] px-4 py-3 outline-none focus:border-b-2 border-[#C9A45C]"
+            placeholder="Enter email"
+            required
+          >
+        </div> {% endcomment %}
+
+        <!-- Password -->
+        <div class="space-y-2">
+          <label class="text-xs tracking-widest text-[#D1C5B4] uppercase">
+            Password
+          </label>
+          <input 
+            type="password" 
+            name="password"
+            class="w-full bg-[#2A2A2A] px-4 py-3 outline-none focus:border-b-2 border-[#C9A45C]"
+            placeholder="Enter password"
+            required
+          >
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-xs tracking-widest text-[#D1C5B4] uppercase">
+            Role
+          </label>
+          <select name="role" id="role" class="w-full bg-[#2A2A2A] px-4 py-3 outline-none focus:border-b-2 border-[#C9A45C]" required>
+            {% for value, label in roles %}
+              <option value="{{value}}">{{label}}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <!-- Button -->
+        <button 
+          type="submit"
+          class="w-full py-3 text-sm font-medium tracking-wide text-[#261900] rounded-md 
+                 bg-gradient-to-br from-[#E8C176] to-[#C9A45C] 
+                 hover:scale-[1.02] transition-all duration-300">
+          Create Admin
+        </button>
+
+      </form>
+    </div>
+
+
+    <!-- RIGHT: TABLE -->
+    <div class="bg-[#131313] p-10 rounded-md">
+
+      <!-- Title -->
+      <div class="mb-8">
+        <h2 class="text-2xl font-semibold">Existing Admins</h2>
+        <p class="text-sm text-[#D1C5B4] mt-1">
+          View and manage all admin users
+        </p>
+      </div>
+
+      <!-- Table -->
+      <div class="space-y-4">
+
+        <!-- Header Row -->
+        <div class="grid grid-cols-4 text-xs text-[#4E4639] uppercase tracking-widest pb-2">
+          <span>Username</span>
+          <span>Email</span>
+          <span>Actions</span>
+          <span></span>
+        </div>
+
+        <!-- Row -->
+        {% for admin in admins %}
+        <div class="grid grid-cols-4 items-center bg-[#1C1B1B] px-4 py-4 rounded-md hover:bg-[#2A2A2A] transition">
+
+          <span class="text-sm">{{ admin.username }}</span>
+          <span class="text-sm text-[#D1C5B4]">{{ admin.email }}</span>
+
+          <!-- Actions -->
+          <div class="flex gap-4 text-sm">
+
+            <a href="{% url "update_admin" admin.id %}" class="text-[#E8C176] hover:underline">
+              Update
+            </a>
+
+            <a href="{% url "delete_admin" admin.id %}" class="text-red-400 hover:underline">
+              Delete
+            </a>
+
+          </div>
+
+          <span></span>
+
+        </div>
+        {% endfor %}
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}

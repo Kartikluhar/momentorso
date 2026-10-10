@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+{% block content %}
+<!-- Changed to flex-col on mobile, flex-row on desktop (md:flex-row). Adjusted top padding. -->
+<div class="min-h-screen bg-[#0E0E0E] text-[#E5E2E1] flex flex-col md:flex-row pt-16 md:pt-32">
+
+  <!-- Sidebar -->
+  <!-- Made w-full on mobile, fixed w-64 on desktop. Added border for separation on mobile. -->
+  <aside class="w-full md:w-64 bg-[#131313] p-6 md:p-8 flex flex-col justify-between border-b md:border-b-0 md:border-r border-[#2A2A2A]">
+
+    <div>
+      <!-- Logo / Title -->
+      <!-- Adjusted flex to put logo and admin text side-by-side on mobile, stacked on desktop -->
+      <h1 class="text-2xl font-serif leading-tight flex items-baseline gap-2 md:block">
+        Momentorso
+        <span class="text-[#D1C5B4] text-lg">Admin</span>
+      </h1>
+
+      <!-- Menu -->
+      <!-- Converted to a horizontal wrapping flexbox on mobile, vertical stack on desktop -->
+      <nav class="mt-6 md:mt-12 flex flex-wrap md:flex-col gap-4 md:gap-0 md:space-y-6 text-sm tracking-wide">
+        <a href="{% url 'add_admin' %}" class="block text-[#E5E2E1] hover:text-[#E8C176] transition">
+          + Add Admin
+        </a>
+        <a href="{% url 'add_category' %}" class="block text-[#D1C5B4] hover:text-[#E8C176] transition">
+          + Add Category
+        </a>
+        <a href="{% url 'add_image' %}" class="block text-[#D1C5B4] hover:text-[#E8C176] transition">
+          + Add Image
+        </a>
+        <a href="{% url 'inquiry' %}" class="block text-[#D1C5B4] hover:text-[#E8C176] transition">
+          + Manage Inquiries
+        </a>
+      </nav>
+    </div>
+
+    <!-- Bottom subtle note (Hidden on mobile to save space) -->
+    <p class="hidden md:block text-xs text-[#4E4639] tracking-wide mt-8">
+      Digital Atelier System
+    </p>
+
+  </aside>
+
+  <!-- Main Content -->
+  <!-- Scaled down padding on mobile -->
+  <main class="flex-1 p-6 md:p-10">
+
+    <!-- Header -->
+    <div class="flex justify-between items-start sm:items-center mb-8 md:mb-12">
+      <div>
+        <h2 class="text-3xl md:text-4xl font-serif">
+          Dashboard
+        </h2>
+        <p class="text-xs sm:text-sm text-[#D1C5B4] mt-2 tracking-wide">
+          Manage your system with precision
+        </p>
+      </div>
+
+      <!-- Glass Button -->
+      <!-- Added shrink-0 so it doesn't get crushed by long text on tiny screens -->
+      <a href="{% url 'logout' %}" class="px-5 py-2 text-sm tracking-wide rounded-md shrink-0
+                     bg-white/10 backdrop-blur-md
+                     hover:bg-white/20 transition ml-4">
+        Logout
+      </a>
+    </div>
+
+    <!-- Content Area -->
+    <!-- Added grid-cols-1 for mobile, sm:grid-cols-2 for tablets. Reduced gap on mobile. -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-10">
+
+      <!-- Card 1 -->
+      <div class="bg-[#1C1B1B] p-6 md:p-8 rounded-md relative hover:scale-[1.02] transition">
+        <div class="absolute inset-0 bg-[#DDAD69] opacity-[0.04] blur-3xl"></div>
+        <div class="relative z-10">
+          <h3 class="text-lg md:text-xl font-semibold">Add Admin</h3>
+          <p class="text-sm text-[#D1C5B4] mt-2">
+            Create and manage administrator access.
+          </p>
+          <a href="{% url 'add_admin' %}" class="inline-block mt-4 md:mt-6 text-[#E8C176] text-sm">
+            Go →
+          </a>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="bg-[#1C1B1B] p-6 md:p-8 rounded-md relative hover:scale-[1.02] transition">
+        <div class="absolute inset-0 bg-[#DDAD69] opacity-[0.04] blur-3xl"></div>
+        <div class="relative z-10">
+          <h3 class="text-lg md:text-xl font-semibold">Add Category</h3>
+          <p class="text-sm text-[#D1C5B4] mt-2">
+            Organize gallery into structured groups.
+          </p>
+          <a href="{% url 'add_category' %}" class="inline-block mt-4 md:mt-6 text-[#E8C176] text-sm">
+            Go →
+          </a>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="bg-[#1C1B1B] p-6 md:p-8 rounded-md relative hover:scale-[1.02] transition">
+        <div class="absolute inset-0 bg-[#DDAD69] opacity-[0.04] blur-3xl"></div>
+        <div class="relative z-10">
+          <h3 class="text-lg md:text-xl font-semibold">Add Image</h3>
+          <p class="text-sm text-[#D1C5B4] mt-2">
+            Upload and manage project visuals.
+          </p>
+          <a href="{% url 'add_image' %}" class="inline-block mt-4 md:mt-6 text-[#E8C176] text-sm">
+            Go →
+          </a>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="bg-[#1C1B1B] p-6 md:p-8 rounded-md relative hover:scale-[1.02] transition">
+        <div class="absolute inset-0 bg-[#DDAD69] opacity-[0.04] blur-3xl"></div>
+        <div class="relative z-10">
+          <h3 class="text-lg md:text-xl font-semibold">Manage Inquiries</h3>
+          <p class="text-sm text-[#D1C5B4] mt-2">
+            Manage Your Inquiries!
+          </p>
+          <a href="{% url 'inquiry' %}" class="inline-block mt-4 md:mt-6 text-[#E8C176] text-sm">
+            Go →
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+{% endblock %}

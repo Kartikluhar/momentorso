@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="min-h-screen bg-[#0E0E0E] text-[#E5E2E1] p-32">
+    <!-- Header -->
+    <div class="mb-12">
+      <h1 class="text-4xl font-serif">Add Image</h1>
+      <p class="text-sm text-[#D1C5B4] mt-2 tracking-wide">Upload and assign visuals to categories</p>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-16">
+      <!-- FORM -->
+      <div class="bg-[#1C1B1B] p-10 rounded-md relative">
+        <div class="absolute inset-0 bg-[#DDAD69] opacity-[0.04] blur-3xl"></div>
+
+        <form method="POST" enctype="multipart/form-data" class="relative z-10 space-y-8">
+          {% csrf_token %}
+
+          <h2 class="text-2xl font-semibold">Upload Image</h2>
+
+          <!-- Image -->
+          <div class="space-y-2">
+            <label class="text-xs tracking-widest text-[#D1C5B4] uppercase">Image</label>
+            <input type="file" name="image" multiple class="w-full bg-[#2A2A2A] px-4 py-3 text-sm outline-none" accept="image/*" required />
+          </div>
+
+          <!-- Category -->
+          <div class="space-y-2">
+            <label class="text-xs tracking-widest text-[#D1C5B4] uppercase">Category</label>
+            <select name="category" class="w-full bg-[#2A2A2A] px-4 py-3 outline-none focus:border-b-2 border-[#C9A45C]" required>
+              {% for category in categories %}
+                <option value="{{ category.id }}">{{ category.title }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- Button -->
+          <button type="submit" class="w-full py-3 text-sm font-medium tracking-wide text-[#261900] rounded-md bg-gradient-to-br from-[#E8C176] to-[#C9A45C] hover:scale-[1.02] transition" name="upload_image">Upload Image</button>
+        </form>
+      </div>
+
+      <!-- TABLE -->
+      <div class="bg-[#131313] p-10 rounded-md">
+        <div class="flex justify-between items-center mb-6">
+          <h2></h2>
+          <form method="POST" action="{% url 'delete_all_images' %}">
+            {% csrf_token %}
+            <button type="submit" onclick="return confirm('Are you sure you want to delete ALL images?')" class="px-4 py-2 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition" name="delete_all_images">Delete All</button>
+          </form>
+        </div>
+
+        <div class="mb-8">
+          <h2 class="text-2xl font-semibold">Images</h2>
+        </div>
+
+        <div class="space-y-4">
+          <!-- Header -->
+          <div class="grid grid-cols-4 text-xs text-[#4E4639] uppercase tracking-widest">
+            <span>Preview</span>
+            <span>Category</span>
+            <span>Actions</span>
+            <span></span>
+          </div>
+
+          {% for image in images %}
+            <div class="grid grid-cols-4 items-center bg-[#1C1B1B] p-4 rounded-md hover:bg-[#2A2A2A] transition">
+              <img src="{{ image.image.url }}" class="w-14 h-14 object-cover rounded" />
+
+              <span class="text-sm text-[#D1C5B4]">{{ image.category.title }}</span>
+
+              <div class="flex gap-4 text-sm">
+                <a href="{% url 'update_image' image.id %}" class="text-[#E8C176]">Update</a>
+                <a href="{% url 'delete_image' image.id %}" class="text-red-400">Delete</a>
+              </div>
+
+              <span></span>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,125 @@
+{% extends 'base.html' %} {% block title %}
+  Gallery | Momentorso
+{% endblock %} {% block content %}
+  <main class="pt-32 pb-20 px-6 md:px-12 max-w-screen-2xl mx-auto">
+    <!-- Admin-Managed Description Section -->
+    <section class="mb-24 grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+      <div class="lg:col-span-7">
+        <span class="text-primary-container font-label text-[10px] tracking-[0.3em] uppercase block mb-6">Archive 01 // Curation</span>
+        <h2 class="text-5xl md:text-7xl font-headline text-on-surface leading-[1.1] mb-8">
+          The Gallery of
+          <span class="italic text-on-surface-variant">Momentorso</span>
+        </h2>
+        <div class="h-px w-24 bg-gradient-to-r from-primary to-transparent mb-8"></div>
+      </div>
+      <div class="lg:col-span-5 bg-surface-container-low p-10 border-l border-outline-variant/20">
+        <p class="text-on-surface-variant font-body leading-relaxed text-lg mb-6 italic">"Architecture should speak of its time and place, but yearn for timelessness."</p>
+        <div class="space-y-4 text-on-surface/80 text-sm leading-relaxed">
+          <p>Our gallery serves as a living record of our explorations into light, shadow, and materiality. Each frame is a testament to the Digital Atelier's philosophy: that luxury resides in the precision of the void.</p>
+          <p>This collection is managed and curated by our lead architects to showcase the evolution of Momentorso’s signature aesthetic—balancing monumental forms with intimate textures.</p>
+        </div>
+        {% comment %} <div class="mt-10 flex gap-4">
+          <div class="flex -space-x-3">
+            <div class="w-10 h-10 rounded-full border-2 border-surface bg-surface-container-highest flex items-center justify-center overflow-hidden">
+              <img class="w-full h-full object-cover" data-alt="portrait of a professional male architect in black turtleneck with thoughtful expression" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfK5oq1vdx8aGtU7wixJVVR8x8oBa9mJp94FuQDNyuQkL3VqQ6sbKXWfDMT9sYOuVG2OUiowt4UV9gAWe0RIxoZ3J45T6GZF_5s48WRrz06gZriRsLohfSPw49R_BlwwhDfQn4XY8YKvAlC9DpZYllctmOaO7pMv1TEFdXIzaMpXJilE3Uqyjn6qvzWxoLisQFIZQzwjQ_cNPLBFRBYKXV7CjXYEXl5_iwrLOt2Tx1iFr0vHUZA22HJf7DDiKeXBDbhJq65evpNdQ" />
+            </div>
+            <div class="w-10 h-10 rounded-full border-2 border-surface bg-surface-container-highest flex items-center justify-center overflow-hidden">
+              <img class="w-full h-full object-cover" data-alt="portrait of a professional female interior designer with elegant minimalist jewelry" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQZCYCMob84XhS8ZnRfyga9Ka6t6cFGQrQj9NqZfojOFbPM7lnm83TT1SrCUgW4y6RuOtTguIxESKuzWnu823uJJQt0QiLwOrJ8cT33-wcji19ADCXjzKc-iHVoqsEHMz6oiI1EkLQ_XUhTJ2XJrOAAR83VNfrP398jidXpcr7YgDFC5ioUOjq_H5YZahPQ21453FspH_k-dvfVKgO5rYjoCthpkLyXrMR15brje-VK-WlES44XXPFBXrLMdqpS04OQFsaLmcNl20" />
+            </div>
+          </div>
+          <div class="text-[10px] tracking-wider text-outline-variant flex flex-col justify-center">
+            <span class="uppercase font-bold text-on-surface">Curated by Studio Leads</span>
+            <span>Last Updated: Nov 2024</span>
+          </div>
+        </div> {% endcomment %}
+      </div>
+    </section>
+    <!-- Masonry Gallery -->
+    <div class="masonry-grid">
+      <!-- Item 1 -->
+      {% for category in categories %}
+      <a href="{% url "sub_gallery" category.title %}">
+        <div class="masonry-item group relative">
+          <div class="overflow-hidden rounded-xl bg-surface-container shadow-2xl transition-all duration-700 group-hover:shadow-primary/5">
+            <img class="w-full grayscale group-hover:grayscale-0 transition-all duration-1000 scale-100 group-hover:scale-105" data-alt="minimalist concrete villa with large glass windows overlooking a foggy pine forest at dawn" src="{{category.image.url}}" />
+            <div class="absolute inset-0 bg-gradient-to-t from-surface-dim via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 p-8 flex flex-col justify-end">
+              <span class="text-primary font-label text-[10px] tracking-widest uppercase mb-2">{{category.title}}</span>
+              <h3 class="font-headline text-2xl text-on-surface">{{category.description}}</h3>
+            </div>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+
+      {% comment %} <!-- Item 1 -->
+      <div class="masonry-item group relative">
+        <div class="overflow-hidden rounded-xl bg-surface-container shadow-2xl transition-all duration-700 group-hover:shadow-primary/5">
+          <img class="w-full grayscale group-hover:grayscale-0 transition-all duration-1000 scale-100 group-hover:scale-105" data-alt="minimalist concrete villa with large glass windows overlooking a foggy pine forest at dawn" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDa5cI3BDpkGYCXXcATfxah4VYxuzMUHPXMvInWOUoI8mZKHRnkfkwC-DwJFmCqFJVXccRXMwN2f-Uqa-oD6gtwC7SvLTDvlHNcCERto3mz-1wg2W3136GQyr8oLGwAxILlDaMLYw-TehQV7L0AyngqF6m_4P2A3yKa87IXG-huDKCu4j0yxtaq2GSkuoKAfW3_fkOmpq57wi_4XCTsWIWgeULgVrLsrXJXyNjpwfSdJsv1HQLGboE_WPLrH-_f1VK_sqakN-Hyu8s" />
+          <div class="absolute inset-0 bg-gradient-to-t from-surface-dim via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 p-8 flex flex-col justify-end">
+            <span class="text-primary font-label text-[10px] tracking-widest uppercase mb-2">Residential</span>
+            <h3 class="font-headline text-2xl text-on-surface">The Obsidian House</h3>
+          </div>
+        </div>
+      </div> {% endcomment %}
+      <!-- Item 2 -->
+      {% comment %} <div class="masonry-item group relative">
+        <div class="overflow-hidden rounded-xl bg-surface-container shadow-2xl transition-all duration-700 group-hover:shadow-primary/5">
+          <img class="w-full grayscale group-hover:grayscale-0 transition-all duration-1000 scale-100 group-hover:scale-105" data-alt="ultra luxury living room with gold accents dark wood paneling and sculptural marble coffee table" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCw5GzfX-OIatX1KHnfDUMrkFy7WhMhy7HI_cA3BWFyZ9rk5LrOa9LJwaBNXhHiDFW6Fg3Qu_vHrK_M2RJk60qJbg42NX6qh9aCjFeqIaw5xEnvxyerjZs6hPzKr2zixBJcyLNYdIUuyveWMPJ9J86gHr3hsatt5kdKpkaPGm6oK2BfcHh1njVqC2R5MF-m0oGU84UdfqMet5SS-Ws14-RZwX2VcOqNQC_7iogjLefhFvYRHCuxB7JaW_PKz7zdpC5X9c_8N-QT9cE" />
+          <div class="absolute inset-0 bg-gradient-to-t from-surface-dim via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 p-8 flex flex-col justify-end">
+            <span class="text-primary font-label text-[10px] tracking-widest uppercase mb-2">Interior</span>
+            <h3 class="font-headline text-2xl text-on-surface">Atelier Lounge</h3>
+          </div>
+        </div>
+      </div> {% endcomment %}
+      <!-- Item 3 -->
+      {% comment %} <div class="masonry-item group relative">
+        <div class="overflow-hidden rounded-xl bg-surface-container shadow-2xl transition-all duration-700 group-hover:shadow-primary/5">
+          <img class="w-full grayscale group-hover:grayscale-0 transition-all duration-1000 scale-100 group-hover:scale-105" data-alt="architectural close up of white spiraling staircase with dramatic shadows and golden sunlight hitting the edges" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBX6ArCxYqJeQuJuqKrNlV6ZU2mUYfgpZap5bC06JWkVjB2_kfyECNGem4HrDQabr-8aS8A61cQbWQStnQqeS7433mvETPrtLBUfEmOrAZLdDsuBZNbh9dT498IdPUBjrcmJgNcZpJDccUwsJP82fAxPiuc1eBw0XtBV0mh4X6-XPYDM44LENVcsZfwBEF8kjE--i9iwWP2iqQiLIEdfQ0-i-6FXoZvXgqcGwqo8Zfi-G6sDOLjBRpcF8YiIymDtnwjH_jH_0q33eg" />
+          <div class="absolute inset-0 bg-gradient-to-t from-surface-dim via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 p-8 flex flex-col justify-end">
+            <span class="text-primary font-label text-[10px] tracking-widest uppercase mb-2">Conceptual</span>
+            <h3 class="font-headline text-2xl text-on-surface">Vertex Flow</h3>
+          </div>
+        </div>
+      </div> {% endcomment %}
+      <!-- Item 4 -->
+      {% comment %} <div class="masonry-item group relative">
+        <div class="overflow-hidden rounded-xl bg-surface-container shadow-2xl transition-all duration-700 group-hover:shadow-primary/5">
+          <img class="w-full grayscale group-hover:grayscale-0 transition-all duration-1000 scale-100 group-hover:scale-105" data-alt="monolithic glass skyscraper reflecting a deep blue twilight sky with warm interior office lights" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIE7j1RKNqUQQAj82sDB38MQrRBGHVq-i83d06VUhIOYN1J7WG9-ZJNhvOVSUYHwf3GJ5-6yspxw9THrfnaEWf4OAVG-gu-sLSYBJl2mDDXmX67RxABvxNZ3CxExl_23VqBpRkCgBJrIPXuYLaKAqUQXTEtfZBaDjUaJVUdWRXUUmovQja0c_qW_lXkDBeOnxMOOFInTqq4tXLqTz6ATG-2TcU3EvBpXBsfCjFzcH9a9lUFeF6eSnL_p7KidSoaemlqBDL8Tl8pLc" />
+          <div class="absolute inset-0 bg-gradient-to-t from-surface-dim via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 p-8 flex flex-col justify-end">
+            <span class="text-primary font-label text-[10px] tracking-widest uppercase mb-2">Commercial</span>
+            <h3 class="font-headline text-2xl text-on-surface">The Prism Tower</h3>
+          </div>
+        </div>
+      </div> {% endcomment %}
+      <!-- Item 5 (Wide/Featured) -->
+      {% comment %} <div class="masonry-item group relative">
+        <div class="overflow-hidden rounded-xl bg-surface-container shadow-2xl transition-all duration-700 group-hover:shadow-primary/5">
+          <img class="w-full grayscale group-hover:grayscale-0 transition-all duration-1000 scale-100 group-hover:scale-105" data-alt="expansive minimalist kitchen with dark charcoal cabinetry and a massive white marble island illuminated by hidden LEDs" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaNSAMoLuEQtRMLtuk9kzhXi2bE7B_BEO2FJRHtIV7iXKLfYoILH6E56UalCs_p37ylPSQ0YueO8FlMT9g541AERA5oOpIzXWakDVi16ThYuwbenRb3kwTAVyOWweaCvtwarPHd4FiG-52hDuAe9q5KCZPpEERIUdnCemI_yQnasMB6_KUM7NojZnhQsA0zkU0geMuI3suJw27CWEH2IskEdZbNCvadgab0fUk5twbs74vIZ3Bc1OGjjIG5iI4AGCVw9rPMtxiyPg" />
+          <div class="absolute inset-0 bg-gradient-to-t from-surface-dim via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 p-8 flex flex-col justify-end">
+            <span class="text-primary font-label text-[10px] tracking-widest uppercase mb-2">Culinary</span>
+            <h3 class="font-headline text-2xl text-on-surface">Monolith Kitchen</h3>
+          </div>
+        </div>
+      </div> {% endcomment %}
+      <!-- Item 6 -->
+      {% comment %} <div class="masonry-item group relative">
+        <div class="overflow-hidden rounded-xl bg-surface-container shadow-2xl transition-all duration-700 group-hover:shadow-primary/5">
+          <img class="w-full grayscale group-hover:grayscale-0 transition-all duration-1000 scale-100 group-hover:scale-105" data-alt="interior shot of a minimalist library with floortoceiling walnut bookshelves and a single designer lounge chair" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvOwDc-0kMdKs2VBiqbVxZb_4NcIpUnbE39-kfunjPRfHr48crGxHOVoYadPIRpJrxvyQqFqP7xs2aKZ-qMxmVQZhsGLcqQu80Nw1J_nw5W5ev15OuBINM_jzRS9OWdoe2zMB_nNuEGfFAN-vwxjJ4tJ85gbFq0NngwUqej53IXvPMOAEH5q38ZegBxlBOerwJrHlgvCgsRmOPBc4sXrne45CxXQvOM-tVL3qwY2-b0NG-3_PQk_E_OxV2cTSNBkgTEJw8-k9lqcM" />
+          <div class="absolute inset-0 bg-gradient-to-t from-surface-dim via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 p-8 flex flex-col justify-end">
+            <span class="text-primary font-label text-[10px] tracking-widest uppercase mb-2">Library</span>
+            <h3 class="font-headline text-2xl text-on-surface">The Sanctum</h3>
+          </div>
+        </div>
+      </div>
+    </div> {% endcomment %}
+
+    <!-- Pagination/Load More -->
+    {% comment %} <div class="mt-20 flex flex-col items-center">
+      <button class="group flex items-center gap-4 text-primary font-label tracking-[0.2em] uppercase text-xs">
+        <span class="h-px w-12 bg-primary transition-all group-hover:w-24"></span>
+        View Full Archive
+        <span class="h-px w-12 bg-primary transition-all group-hover:w-24"></span>
+      </button>
+    </div> {% endcomment %}
+  </main>
+{% endblock %}
