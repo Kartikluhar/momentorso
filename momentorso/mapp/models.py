@@ -1,8 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-# Create your models here.
 class Profile(models.Model):
+    """
+    User profile model extending the default Django User.
+    Handles role-based access for admins.
+    """
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     ROLE_CHOICES = (
         ('sadmin','Super admin'),
@@ -13,6 +16,9 @@ class Profile(models.Model):
         return self.user.username
 
 class Inquiry(models.Model):
+    """
+    Stores contact inquiries submitted by users from the frontend.
+    """
     name = models.CharField(max_length=100, null=False, blank=False)
     email = models.EmailField(null=False, blank=False)
     mobile = models.CharField(max_length=20, null=False, blank=False)
@@ -23,6 +29,9 @@ class Inquiry(models.Model):
         return self.name
 
 class Category(models.Model):
+    """
+    Represents a category/album for the gallery, containing multiple images.
+    """
     image = models.ImageField(upload_to='category/', null=False, blank=False)
     title = models.CharField(max_length=100, null=False, blank=False, unique=True)
     description = models.TextField(null=False, blank=False)
@@ -32,6 +41,9 @@ class Category(models.Model):
         return self.title
 
 class Image(models.Model):
+    """
+    Individual images uploaded to a specific gallery category.
+    """
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='images')
     image = models.ImageField(upload_to='images/', null=False, blank=False)
     created_at = models.DateTimeField(auto_now_add=True)

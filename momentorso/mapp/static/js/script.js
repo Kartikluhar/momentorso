@@ -1,6 +1,10 @@
+document.addEventListener("DOMContentLoaded", function() {
   const menuBtn = document.getElementById("menuBtn");
   const mobileMenu = document.getElementById("mobileMenu");
   const menuIcon = document.getElementById("menuIcon");
+
+  // Prevent errors if elements don't exist on page
+  if (!menuBtn || !mobileMenu || !menuIcon) return;
 
   let isOpen = false;
 
@@ -16,3 +20,4 @@
     // Disable scroll
     document.body.style.overflow = isOpen ? "hidden" : "auto";
   });
+});

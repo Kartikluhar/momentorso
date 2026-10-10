@@ -24,8 +24,9 @@ body {
   -webkit-backdrop-filter: blur(20px);
 }
 
-/* Gradients */
-.gold-gradient {
+/* Gradients & Buttons */
+.gold-gradient,
+.gold-button-gradient {
   background: linear-gradient(135deg, #e8c176 0%, #c9a45c 100%);
 }
 
@@ -65,9 +66,4 @@ body {
     rgba(232, 193, 118, 0.05) 0%,
     rgba(201, 164, 92, 0) 100%
   );
-}
-
-/* Buttons */
-.gold-button-gradient {
-  background: linear-gradient(135deg, #e8c176 0%, #c9a45c 100%);
 }

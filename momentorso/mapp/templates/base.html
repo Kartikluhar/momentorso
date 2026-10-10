@@ -38,7 +38,6 @@
       <header class="fixed top-0 w-full z-50 bg-neutral-950/40 backdrop-blur-xl shadow-[0_20px_50px_rgba(221,173,105,0.05)]">
         <div class="max-w-screen-2xl mx-auto flex justify-between items-center px-6 md:px-12 py-3">
           <div class="flex items-center gap-4">
-            {% comment %} <span class="material-symbols-outlined text-amber-200 text-3xl" data-icon="architecture">architecture</span> {% endcomment %}
             <span class="text-2xl font-bold tracking-[0.2em] text-transparent bg-clip-text bg-gradient-to-r from-[#E8C176] to-[#C9A45C] font-serif uppercase"><img src="{% static 'images/logo.png' %}" class="h-16" alt="logo" /></span>
           </div>
           <nav class="hidden lg:flex items-center gap-10 font-label text-[10px] tracking-[0.2em] uppercase">
@@ -68,32 +67,7 @@
               Services
             </a>
 
-            <a class="{% if url_name == 'gallery' %}
-                
-                
-                
-                
-              
-              text-amber-200 border-b-2 border-[#E8C176] pb-1
-
-
-
-
-
-              {% else %}
-                
-                
-                
-                
-              
-              text-stone-400 hover:text-stone-200
-
-
-
-
-
-              {% endif %}"
-              href="{% url 'gallery' %}">
+            <a class="{% if url_name == 'gallery' %}text-amber-200 border-b-2 border-[#E8C176] pb-1{% else %}text-stone-400 hover:text-stone-200{% endif %}" href="{% url 'gallery' %}">
               Gallery
             </a>
 
@@ -109,103 +83,19 @@
           {% if user.is_authenticated %}
               <a class="{% if url_name == 'admin_dashboard' %}text-amber-200{% else %}text-stone-300{% endif %}" href="{% url 'admin_dashboard' %}">Admin Dashboard</a>
               {% endif %}
-          <a href="{% url 'home' %}"
-            class="{% if url_name == 'home' %}
-              
-              
-              
-              
-            text-amber-200
-
-
-
-
-            {% else %}
-              
-              
-              
-              
-            text-stone-300
-
-
-
-
-            {% endif %}">
+          <a href="{% url 'home' %}" class="{% if url_name == 'home' %}text-amber-200{% else %}text-stone-300{% endif %}">
             Home
           </a>
 
-          <a href="{% url 'about' %}"
-            class="{% if url_name == 'about' %}
-              
-              
-              
-              
-            text-amber-200
-
-
-
-
-            {% else %}
-              
-              
-              
-              
-            text-stone-300
-
-
-
-
-            {% endif %}">
+          <a href="{% url 'about' %}" class="{% if url_name == 'about' %}text-amber-200{% else %}text-stone-300{% endif %}">
             About Us
           </a>
 
-          <a href="{% url 'services' %}"
-            class="{% if url_name == 'services' %}
-              
-              
-              
-              
-            text-amber-200
-
-
-
-
-            {% else %}
-              
-              
-              
-              
-            text-stone-300
-
-
-
-
-            {% endif %}">
+          <a href="{% url 'services' %}" class="{% if url_name == 'services' %}text-amber-200{% else %}text-stone-300{% endif %}">
             Services
           </a>
 
-          <a href="{% url 'gallery' %}"
-            class="{% if url_name == 'gallery' %}
-              
-              
-              
-              
-            text-amber-200
-
-
-
-
-            {% else %}
-              
-              
-              
-              
-            text-stone-300
-
-
-
-
-            {% endif %}">
+          <a href="{% url 'gallery' %}" class="{% if url_name == 'gallery' %}text-amber-200{% else %}text-stone-300{% endif %}">
             Gallery
           </a>
 
@@ -258,8 +148,6 @@
         <div class="max-w-screen-2xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-end">
           <div>
             <div class="flex items-center gap-3 mb-8">
-              {% comment %} <span class="material-symbols-outlined text-primary-container text-xl" data-icon="architecture">architecture</span>
-              <span class="font-serif text-lg text-stone-200 tracking-widest uppercase">MOMENTORSO</span> {% endcomment %}
               <img src="{% static 'images/logo.png' %}" alt="logo" class="h-16" />
             </div>
             <div class="flex flex-wrap gap-8 font-sans text-[10px] tracking-[0.15em] uppercase text-stone-500">
@@ -276,28 +164,7 @@
         </div>
       </footer>
 
-      <script>
-        document.addEventListener('DOMContentLoaded', function () {
-          const menuBtn = document.getElementById('menuBtn')
-          const mobileMenu = document.getElementById('mobileMenu')
-          const menuIcon = document.getElementById('menuIcon')
-        
-          let isOpen = false
-        
-          menuBtn.addEventListener('click', () => {
-            isOpen = !isOpen
-        
-            // Slide animation
-            mobileMenu.classList.toggle('translate-x-full')
-        
-            // Icon change
-            menuIcon.innerText = isOpen ? 'close' : 'menu'
-        
-            // Disable scroll
-            document.body.style.overflow = isOpen ? 'hidden' : 'auto'
-          })
-        })
-      </script>
+
     </body>
   {% endwith %}
 </html>
