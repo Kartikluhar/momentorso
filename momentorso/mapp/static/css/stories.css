@@ -1,0 +1,48 @@
+/* Stories Component & Viewer Styles */
+
+/* Hide scrollbars while preserving horizontal touch scroll */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Story Ring Ambient Pulse */
+@keyframes goldPulse {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(232, 193, 118, 0.25);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(232, 193, 118, 0.55);
+  }
+}
+
+.story-ring-active {
+  animation: goldPulse 3.5s infinite ease-in-out;
+}
+
+/* Progress bar fill transition */
+.progress-fill {
+  transform-origin: left;
+  will-change: width;
+}
+
+/* Viewer image fade */
+.viewer-fade-enter {
+  opacity: 0;
+  transform: scale(0.97);
+}
+.viewer-fade-active {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 250ms ease-out, transform 250ms ease-out;
+}
+
+/* Glassmorphic card styling */
+.glass-story-card {
+  background: rgba(18, 18, 18, 0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}

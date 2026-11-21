@@ -3,12 +3,19 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.http import JsonResponse
+from django.utils import timezone
+from django.utils.dateparse import parse_datetime
+from datetime import timedelta
+import os
+from PIL import Image as PILImage
 
 from .models import *
 
 def home(request):
-    """Render the main home page."""
-    return render(request, 'home.html')
+    """Render the main home page with active stories."""
+    active_stories = Story.get_active_stories()
+    return render(request, 'home.html', {'active_stories': active_stories})
 
 
 def aboutus(request):
@@ -370,3 +377,331 @@ def delete_inquiry(request, pk):
         messages.error(request, "Something went wrong!")
 
     return render(request, 'admin/admin_dashboard.html')
+
+
+# ==========================================
+# STORY VALIDATION & HELPER FUNCTIONS
+# ==========================================
+
+ALLOWED_STORY_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.webp'}
+MAX_STORY_UPLOAD_SIZE = 10 * 1024 * 1024  # 10MB
+
+
+def validate_story_image(file):
+    """
+    Validates uploaded story image file extension, size, and image integrity.
+    Supports JPG, JPEG, PNG, and WebP up to 10MB.
+    Returns (True, None) if valid, or (False, error_message).
+    """
+    if not file:
+        return False, "Poster/Image file is required."
+    
+    ext = os.path.splitext(file.name)[1].lower()
+    if ext not in ALLOWED_STORY_EXTENSIONS:
+        return False, f"Unsupported file type '{ext}'. Allowed types: JPG, JPEG, PNG, WebP."
+
+    if file.size > MAX_STORY_UPLOAD_SIZE:
+        return False, f"File size exceeds maximum allowed limit of 10MB."
+
+    try:
+        img = PILImage.open(file)
+        img.verify()
+        if hasattr(file, 'seek'):
+            file.seek(0)
+    except Exception:
+        return False, "Uploaded file is not a valid or readable image."
+
+    return True, None
+
+
+# ==========================================
+# PUBLIC STORY APIS
+# ==========================================
+
+def api_active_stories(request):
+    """
+    Public API returning active stories that have been published and not yet expired.
+    Expired and draft stories are strictly excluded from results.
+    """
+    stories = Story.get_active_stories()
+    data = []
+    for s in stories:
+        data.append({
+            'id': s.id,
+            'title': s.title,
+            'description': s.description,
+            'category': s.get_category_display(),
+            'category_code': s.category,
+            'image_url': s.image.url if s.image else '',
+            'published_at': s.published_at.isoformat() if s.published_at else '',
+            'expires_at': s.expires_at.isoformat() if s.expires_at else '',
+            'time_remaining_seconds': s.time_remaining_seconds,
+            'time_remaining_display': s.time_remaining_display,
+        })
+    return JsonResponse({'stories': data, 'count': len(data)})
+
+
+def api_story_detail(request, pk):
+    """
+    Public API returning details of a single active story.
+    Returns 404 if the story does not exist, is draft, or has expired.
+    """
+    story = Story.get_active_stories().filter(pk=pk).first()
+    if not story:
+        return JsonResponse({'error': 'Story not found or has expired.'}, status=404)
+    return JsonResponse({
+        'story': {
+            'id': story.id,
+            'title': story.title,
+            'description': story.description,
+            'category': story.get_category_display(),
+            'category_code': story.category,
+            'image_url': story.image.url if story.image else '',
+            'published_at': story.published_at.isoformat() if story.published_at else '',
+            'expires_at': story.expires_at.isoformat() if story.expires_at else '',
+            'time_remaining_seconds': story.time_remaining_seconds,
+            'time_remaining_display': story.time_remaining_display,
+        }
+    })
+
+
+# ==========================================
+# ADMIN STORY MANAGEMENT VIEWS
+# ==========================================
+
+@login_required(login_url='admin_login')
+def manage_stories(request):
+    """
+    Admin stories management dashboard.
+    Lists all stories with filtering and provides story creation interface.
+    """
+    status_filter = request.GET.get('status', 'all')
+    all_stories = list(Story.objects.all().order_by('-created_at'))
+
+    # Calculate status counts for filter badges
+    counts = {
+        'all': len(all_stories),
+        'active': 0,
+        'draft': 0,
+        'scheduled': 0,
+        'expired': 0,
+    }
+    for s in all_stories:
+        st = s.computed_status
+        if st in counts:
+            counts[st] += 1
+
+    # Filter stories based on query parameter
+    if status_filter == 'active':
+        filtered_stories = [s for s in all_stories if s.computed_status == 'active']
+    elif status_filter == 'draft':
+        filtered_stories = [s for s in all_stories if s.computed_status == 'draft']
+    elif status_filter == 'scheduled':
+        filtered_stories = [s for s in all_stories if s.computed_status == 'scheduled']
+    elif status_filter == 'expired':
+        filtered_stories = [s for s in all_stories if s.computed_status == 'expired']
+    else:
+        filtered_stories = all_stories
+
+    categories = Story.CATEGORY_CHOICES
+    statuses = Story.STATUS_CHOICES
+
+    return render(request, 'admin/manage_stories.html', {
+        'stories': filtered_stories,
+        'counts': counts,
+        'status_filter': status_filter,
+        'categories': categories,
+        'statuses': statuses,
+    })
+
+
+@login_required(login_url='admin_login')
+def add_story(request):
+    """
+    Handle creation of new stories by administrators.
+    Supports draft, published (24-hour expiration), and scheduled stories.
+    """
+    if request.method == 'POST':
+        title = request.POST.get('title', '').strip()
+        description = request.POST.get('description', '').strip()
+        category = request.POST.get('category', 'general')
+        status = request.POST.get('status', 'draft')
+        scheduled_at_str = request.POST.get('scheduled_at', '').strip()
+        image_file = request.FILES.get('image')
+
+        if not title:
+            messages.error(request, "Story title is required.")
+            return redirect('manage_stories')
+
+        valid, err = validate_story_image(image_file)
+        if not valid:
+            messages.error(request, err)
+            return redirect('manage_stories')
+
+        scheduled_at = None
+        if status == 'scheduled':
+            if not scheduled_at_str:
+                messages.error(request, "Scheduled date and time are required for scheduled stories.")
+                return redirect('manage_stories')
+            try:
+                parsed_dt = parse_datetime(scheduled_at_str)
+                if parsed_dt and timezone.is_naive(parsed_dt):
+                    scheduled_at = timezone.make_aware(parsed_dt)
+                else:
+                    scheduled_at = parsed_dt
+            except Exception:
+                messages.error(request, "Invalid scheduled date/time format.")
+                return redirect('manage_stories')
+
+        story = Story(
+            title=title,
+            description=description,
+            category=category,
+            status=status,
+            image=image_file,
+            scheduled_at=scheduled_at,
+            created_by=request.user
+        )
+
+        now = timezone.now()
+        if status == 'published':
+            story.published_at = now
+            story.expires_at = now + timedelta(hours=24)
+        elif status == 'scheduled' and scheduled_at:
+            story.published_at = scheduled_at
+            story.expires_at = scheduled_at + timedelta(hours=24)
+
+        story.save()
+
+        if status == 'published':
+            messages.success(request, f"Story '{title}' published successfully! It will automatically expire in 24 hours.")
+        elif status == 'scheduled':
+            messages.success(request, f"Story '{title}' scheduled successfully for {scheduled_at.strftime('%b %d, %Y %H:%M')}.")
+        else:
+            messages.success(request, f"Story '{title}' saved as draft.")
+
+        return redirect('manage_stories')
+
+    return redirect('manage_stories')
+
+
+@login_required(login_url='admin_login')
+def update_story(request, pk):
+    """
+    Edit an existing story.
+    Editing an active story preserves its existing publication and expiration timestamps.
+    Republishing resets the 24-hour cycle from the current timestamp.
+    """
+    story = get_object_or_404(Story, pk=pk)
+
+    if request.method == 'POST':
+        action = request.POST.get('action', 'save')
+        title = request.POST.get('title', '').strip()
+        description = request.POST.get('description', '').strip()
+        category = request.POST.get('category', story.category)
+        status = request.POST.get('status', story.status)
+        scheduled_at_str = request.POST.get('scheduled_at', '').strip()
+        new_image = request.FILES.get('image')
+
+        if not title:
+            messages.error(request, "Story title cannot be empty.")
+            return render(request, 'admin/update_story.html', {'story': story, 'categories': Story.CATEGORY_CHOICES, 'statuses': Story.STATUS_CHOICES})
+
+        if new_image:
+            valid, err = validate_story_image(new_image)
+            if not valid:
+                messages.error(request, err)
+                return render(request, 'admin/update_story.html', {'story': story, 'categories': Story.CATEGORY_CHOICES, 'statuses': Story.STATUS_CHOICES})
+            if story.image:
+                story.image.delete(save=False)
+            story.image = new_image
+
+        story.title = title
+        story.description = description
+        story.category = category
+
+        scheduled_at = None
+        if scheduled_at_str:
+            try:
+                parsed_dt = parse_datetime(scheduled_at_str)
+                if parsed_dt and timezone.is_naive(parsed_dt):
+                    scheduled_at = timezone.make_aware(parsed_dt)
+                else:
+                    scheduled_at = parsed_dt
+            except Exception:
+                messages.error(request, "Invalid scheduled date/time format.")
+                return render(request, 'admin/update_story.html', {'story': story, 'categories': Story.CATEGORY_CHOICES, 'statuses': Story.STATUS_CHOICES})
+
+        now = timezone.now()
+
+        if action == 'republish':
+            # Explicit republish: reset 24h clock from right now
+            story.publish(save=False)
+            messages.success(request, f"Story '{story.title}' republished successfully! Expiration timer reset for 24 hours.")
+        elif action == 'unpublish':
+            story.unpublish(save=False)
+            messages.success(request, f"Story '{story.title}' unpublished.")
+        else:
+            # Regular save / update
+            previous_status = story.status
+            story.status = status
+
+            if status == 'published':
+                if previous_status != 'published' or story.is_expired:
+                    # Transitioning from draft/expired to published -> start fresh 24h cycle
+                    story.published_at = now
+                    story.expires_at = now + timedelta(hours=24)
+                # If already active and published, keep published_at and expires_at unchanged!
+            elif status == 'scheduled':
+                if scheduled_at:
+                    story.scheduled_at = scheduled_at
+                    story.published_at = scheduled_at
+                    story.expires_at = scheduled_at + timedelta(hours=24)
+            elif status == 'draft':
+                # Saved as draft; removed from public display
+                pass
+
+            messages.success(request, f"Story '{story.title}' updated successfully.")
+
+        story.save()
+        return redirect('manage_stories')
+
+    return render(request, 'admin/update_story.html', {
+        'story': story,
+        'categories': Story.CATEGORY_CHOICES,
+        'statuses': Story.STATUS_CHOICES,
+    })
+
+
+@login_required(login_url='admin_login')
+def publish_story(request, pk):
+    """
+    Quick action to publish or republish a story, resetting its 24-hour expiration window.
+    """
+    story = get_object_or_404(Story, pk=pk)
+    story.publish()
+    messages.success(request, f"Story '{story.title}' published successfully! It will remain active for 24 hours.")
+    return redirect('manage_stories')
+
+
+@login_required(login_url='admin_login')
+def unpublish_story(request, pk):
+    """
+    Quick action to unpublish a story immediately.
+    """
+    story = get_object_or_404(Story, pk=pk)
+    story.unpublish()
+    messages.success(request, f"Story '{story.title}' unpublished immediately.")
+    return redirect('manage_stories')
+
+
+@login_required(login_url='admin_login')
+def delete_story(request, pk):
+    """
+    Delete a story and its associated poster image file.
+    """
+    story = get_object_or_404(Story, pk=pk)
+    title = story.title
+    story.delete()
+    messages.success(request, f"Story '{title}' deleted successfully.")
+    return redirect('manage_stories')

@@ -1,0 +1,190 @@
+{% load static %}
+
+<!-- Embed initial active stories JSON for instant zero-latency render -->
+<script id="initialStoriesData" type="application/json">
+[
+  {% for story in active_stories %}
+    {
+      "id": {{ story.id }},
+      "title": "{{ story.title|escapejs }}",
+      "description": "{{ story.description|escapejs }}",
+      "category": "{{ story.get_category_display|escapejs }}",
+      "category_code": "{{ story.category|escapejs }}",
+      "image_url": "{{ story.image.url|escapejs }}",
+      "published_at": "{{ story.published_at.isoformat|default:'' }}",
+      "expires_at": "{{ story.expires_at.isoformat|default:'' }}",
+      "time_remaining_seconds": {{ story.time_remaining_seconds|default:0 }}
+    }{% if not forloop.last %},{% endif %}
+  {% endfor %}
+]
+</script>
+
+<!-- STORIES SECTION (Rendered below fixed navbar) -->
+<div id="storiesContainer"
+     class="stories-wrapper {% if not active_stories %}hidden{% endif %} w-full z-40 pt-20 bg-neutral-950/85 backdrop-blur-xl border-b border-white/10 transition-all duration-300">
+  <div class="max-w-screen-2xl mx-auto px-6 md:px-12 py-3">
+    
+    <div class="flex items-center gap-4 mb-2">
+      <div class="flex items-center gap-1.5">
+        <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span class="font-label text-[10px] tracking-[0.25em] text-[#E8C176] uppercase font-bold">Moments &amp; Updates</span>
+      </div>
+      <div class="h-px flex-1 bg-gradient-to-r from-[#E8C176]/30 via-white/5 to-transparent"></div>
+      <span class="text-[9px] tracking-widest text-[#9A8F80] font-label uppercase hidden sm:inline">24h Limited</span>
+    </div>
+
+    <!-- Horizontal Scrollable Story Thumbnails Row -->
+    <div id="storiesList" class="flex items-center gap-5 sm:gap-7 overflow-x-auto no-scrollbar scroll-smooth py-1 px-1">
+      {% for story in active_stories %}
+        <div class="story-item group flex flex-col items-center cursor-pointer shrink-0 transition-transform duration-300 hover:scale-105 select-none"
+             data-index="{{ forloop.counter0 }}"
+             role="button"
+             tabindex="0"
+             aria-label="View story: {{ story.title }}">
+          
+          <!-- Outer Gold Gradient Ring -->
+          <div class="relative p-[2.5px] rounded-full bg-gradient-to-tr from-[#E8C176] via-[#FFDEB2] to-[#9A8F80] group-hover:from-[#FFE3A8] group-hover:to-[#E8C176] shadow-[0_0_15px_rgba(232,193,118,0.25)] group-hover:shadow-[0_0_22px_rgba(232,193,118,0.5)] transition-all duration-300 story-ring-active">
+            <!-- Dark Gap Ring -->
+            <div class="p-[2.5px] bg-[#0E0E0E] rounded-full">
+              <!-- Thumbnail Poster Image -->
+              <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden bg-stone-900 flex items-center justify-center">
+                <img src="{{ story.image.url }}" alt="{{ story.title }}"
+                     class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                     loading="lazy" />
+              </div>
+            </div>
+
+            <!-- Small Category Icon Badge -->
+            <div class="absolute bottom-0 right-0 w-5 h-5 rounded-full bg-neutral-950 border border-[#E8C176] flex items-center justify-center text-[10px] text-[#E8C176] shadow">
+              {% if story.category == 'festival' %}
+                <span class="material-symbols-outlined text-[11px]" data-icon="celebration">celebration</span>
+              {% elif story.category == 'announcement' %}
+                <span class="material-symbols-outlined text-[11px]" data-icon="campaign">campaign</span>
+              {% elif story.category == 'event' %}
+                <span class="material-symbols-outlined text-[11px]" data-icon="event">event</span>
+              {% else %}
+                <span class="material-symbols-outlined text-[11px]" data-icon="auto_awesome">auto_awesome</span>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Story Title & Category -->
+          <div class="mt-2 text-center max-w-[80px] sm:max-w-[90px]">
+            <p class="text-[11px] sm:text-xs text-[#E5E2E1] font-medium truncate group-hover:text-[#E8C176] transition-colors font-body leading-tight">
+              {{ story.title }}
+            </p>
+            <span class="text-[9px] uppercase tracking-wider text-[#9A8F80] font-label block truncate">
+              {{ story.get_category_display }}
+            </span>
+          </div>
+
+        </div>
+      {% endfor %}
+    </div>
+
+  </div>
+</div>
+
+
+<!-- FULL-SCREEN STORY VIEWER MODAL -->
+<div id="storyViewerModal"
+     class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/95 backdrop-blur-2xl p-2 sm:p-4 select-none"
+     role="dialog"
+     aria-modal="true"
+     aria-label="Story Viewer">
+
+  <!-- Floating Chevron Prev Button (Desktop/Tablet) -->
+  <button id="viewerPrevBtn"
+          type="button"
+          class="hidden md:flex absolute left-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white items-center justify-center backdrop-blur-md transition-transform hover:scale-110"
+          aria-label="Previous Story">
+    <span class="material-symbols-outlined text-3xl" data-icon="navigate_before">navigate_before</span>
+  </button>
+
+  <!-- Floating Chevron Next Button (Desktop/Tablet) -->
+  <button id="viewerNextBtn"
+          type="button"
+          class="hidden md:flex absolute right-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white items-center justify-center backdrop-blur-md transition-transform hover:scale-110"
+          aria-label="Next Story">
+    <span class="material-symbols-outlined text-3xl" data-icon="navigate_next">navigate_next</span>
+  </button>
+
+  <!-- Story Stage / Card Container -->
+  <div id="storyCard"
+       class="relative w-full max-w-sm sm:max-w-md h-[92vh] max-h-[820px] rounded-2xl overflow-hidden shadow-2xl flex flex-col justify-between border border-white/10 bg-neutral-950">
+
+    <!-- Ambient Frosted Glass Blurred Background -->
+    <img id="viewerAmbientBg"
+         src=""
+         alt="Story Ambient Background"
+         class="absolute inset-0 w-full h-full object-cover blur-3xl opacity-35 scale-125 pointer-events-none transition-all duration-700" />
+
+    <!-- TOP SECTION: Progress Bar & Header Details -->
+    <div class="relative z-30 pt-4 px-4 bg-gradient-to-b from-black/90 via-black/50 to-transparent">
+      <!-- Segmented Progress Bars -->
+      <div id="viewerProgressBars" class="flex items-center gap-1.5 w-full mb-3"></div>
+
+      <!-- Story Metadata Header -->
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <!-- Atelier Brand Logo Icon -->
+          <div class="w-9 h-9 rounded-full bg-black/60 border border-[#E8C176]/50 flex items-center justify-center overflow-hidden">
+            <img src="{% static 'images/logo.png' %}" alt="Momentorso" class="w-6 h-6 object-contain" />
+          </div>
+
+          <div>
+            <div class="flex items-center gap-2">
+              <span id="viewerTitle" class="text-sm font-semibold text-white truncate max-w-[170px] sm:max-w-[210px]"></span>
+              <span id="viewerCategory" class="text-[9px] uppercase tracking-widest px-2 py-0.5 rounded font-bold font-label bg-[#E8C176]/20 text-[#E8C176] border border-[#E8C176]/40"></span>
+            </div>
+            <p id="viewerTimeAgo" class="text-[10px] text-stone-400 font-label tracking-wider"></p>
+          </div>
+        </div>
+
+        <!-- Controls: Pause/Play & Close -->
+        <div class="flex items-center gap-1 text-white">
+          <button id="viewerPauseBtn" type="button" class="p-2 hover:bg-white/10 rounded-full transition" aria-label="Pause/Resume story">
+            <span id="viewerPauseIcon" class="material-symbols-outlined text-xl">pause</span>
+          </button>
+          <button id="viewerCloseBtn" type="button" class="p-2 hover:bg-white/10 rounded-full transition" aria-label="Close story viewer">
+            <span class="material-symbols-outlined text-2xl">close</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CENTER VISUAL STAGE -->
+    <div class="relative flex-1 w-full h-full overflow-hidden flex items-center justify-center z-20">
+      
+      <!-- Loading Spinner Indicator -->
+      <div id="viewerLoader" class="absolute inset-0 flex items-center justify-center z-10 bg-black/40">
+        <div class="w-8 h-8 rounded-full border-2 border-stone-600 border-t-[#E8C176] animate-spin"></div>
+      </div>
+
+      <!-- Clean Display of Poster Visual (No Distortion) -->
+      <img id="viewerImage"
+           src=""
+           alt="Story Visual Poster"
+           class="relative z-10 max-h-[78vh] w-auto max-w-full object-contain mx-auto select-none pointer-events-none rounded transition-opacity duration-300 shadow-2xl" />
+
+      <!-- Left Tap Zone (Previous Story) -->
+      <div id="viewerTapLeft" class="absolute inset-y-0 left-0 w-1/3 z-20 cursor-pointer" title="Previous Story"></div>
+
+      <!-- Right Tap Zone (Next Story) -->
+      <div id="viewerTapRight" class="absolute inset-y-0 right-0 w-2/3 z-20 cursor-pointer" title="Next Story"></div>
+    </div>
+
+    <!-- BOTTOM CAPTION BOX (If description exists) -->
+    <div id="viewerCaptionBox"
+         class="relative z-30 p-4 bg-gradient-to-t from-black/95 via-black/75 to-transparent hidden transition-all">
+      <p id="viewerDescription" class="text-xs sm:text-sm text-[#E5E2E1] font-body leading-relaxed max-h-24 overflow-y-auto no-scrollbar"></p>
+      <div class="flex items-center justify-between mt-2 pt-2 border-t border-white/10 text-[10px] text-[#9A8F80]">
+        <span class="flex items-center gap-1">
+          <span class="material-symbols-outlined text-xs">touch_app</span> Tap sides to navigate • Hold to pause
+        </span>
+        <span class="font-label tracking-widest text-[#E8C176] uppercase">Momentorso Atelier</span>
+      </div>
+    </div>
+
+  </div>
+</div>
