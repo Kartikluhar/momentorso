@@ -1,0 +1,433 @@
+{% extends 'base.html' %}
+{% block title %}Stories Management | Momentorso Admin{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-[#0E0E0E] text-[#E5E2E1] p-6 md:p-12 lg:p-16 pt-28 md:pt-32">
+
+  <!-- Breadcrumb & Header -->
+  <div class="mb-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div>
+      <div class="flex items-center gap-3 mb-2">
+        <a href="{% url 'admin_dashboard' %}" class="text-xs text-[#D1C5B4] hover:text-[#E8C176] tracking-widest uppercase transition flex items-center gap-1 font-label">
+          <span class="material-symbols-outlined text-sm">arrow_back</span> Dashboard
+        </a>
+        <span class="text-stone-600">/</span>
+        <span class="text-xs text-[#E8C176] tracking-widest uppercase font-label">Stories</span>
+      </div>
+      <h1 class="text-3xl md:text-4xl font-serif">Stories Management</h1>
+      <p class="text-xs md:text-sm text-[#D1C5B4] mt-2 tracking-wide">
+        Publish announcements, festival posters, event updates, and expiring visual stories (24h lifespan).
+      </p>
+    </div>
+
+    <!-- Quick Expiration Policy Indicator -->
+    <div class="bg-[#1C1B1B] border border-[#DDAD69]/20 px-4 py-3 rounded-lg flex items-center gap-3">
+      <span class="material-symbols-outlined text-[#E8C176]" data-icon="timer">timer</span>
+      <div>
+        <p class="text-xs font-semibold text-[#E5E2E1]">Strict 24h Expiration</p>
+        <p class="text-[11px] text-[#D1C5B4]">Backend auto-enforced • Zero cron dependency</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Status Filter Tabs -->
+  <div class="flex flex-wrap items-center gap-2 mb-10 pb-4 border-b border-[#2A2A2A]">
+    <a href="{% url 'manage_stories' %}?status=all"
+       class="px-4 py-2 text-xs font-label uppercase tracking-widest rounded-md transition {% if status_filter == 'all' %}bg-[#E8C176] text-[#261900] font-bold shadow-md shadow-[#E8C176]/10{% else %}bg-[#1C1B1B] text-[#D1C5B4] hover:text-[#E5E2E1] hover:bg-[#2A2A2A]{% endif %}">
+      All Stories ({{ counts.all }})
+    </a>
+    <a href="{% url 'manage_stories' %}?status=active"
+       class="px-4 py-2 text-xs font-label uppercase tracking-widest rounded-md transition flex items-center gap-2 {% if status_filter == 'active' %}bg-emerald-500 text-neutral-950 font-bold{% else %}bg-[#1C1B1B] text-[#D1C5B4] hover:text-[#E5E2E1] hover:bg-[#2A2A2A]{% endif %}">
+      <span class="w-2 h-2 rounded-full bg-emerald-400"></span> Active ({{ counts.active }})
+    </a>
+    <a href="{% url 'manage_stories' %}?status=draft"
+       class="px-4 py-2 text-xs font-label uppercase tracking-widest rounded-md transition flex items-center gap-2 {% if status_filter == 'draft' %}bg-stone-300 text-neutral-950 font-bold{% else %}bg-[#1C1B1B] text-[#D1C5B4] hover:text-[#E5E2E1] hover:bg-[#2A2A2A]{% endif %}">
+      <span class="w-2 h-2 rounded-full bg-stone-400"></span> Drafts ({{ counts.draft }})
+    </a>
+    <a href="{% url 'manage_stories' %}?status=scheduled"
+       class="px-4 py-2 text-xs font-label uppercase tracking-widest rounded-md transition flex items-center gap-2 {% if status_filter == 'scheduled' %}bg-amber-400 text-neutral-950 font-bold{% else %}bg-[#1C1B1B] text-[#D1C5B4] hover:text-[#E5E2E1] hover:bg-[#2A2A2A]{% endif %}">
+      <span class="w-2 h-2 rounded-full bg-amber-400"></span> Scheduled ({{ counts.scheduled }})
+    </a>
+    <a href="{% url 'manage_stories' %}?status=expired"
+       class="px-4 py-2 text-xs font-label uppercase tracking-widest rounded-md transition flex items-center gap-2 {% if status_filter == 'expired' %}bg-rose-500 text-white font-bold{% else %}bg-[#1C1B1B] text-[#D1C5B4] hover:text-[#E5E2E1] hover:bg-[#2A2A2A]{% endif %}">
+      <span class="w-2 h-2 rounded-full bg-rose-400"></span> Expired ({{ counts.expired }})
+    </a>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+
+    <!-- LEFT: CREATE STORY FORM -->
+    <div class="lg:col-span-5 bg-[#1C1B1B] p-6 md:p-8 rounded-lg relative border border-[#2A2A2A]">
+      <div class="absolute inset-0 bg-[#DDAD69] opacity-[0.03] blur-3xl pointer-events-none"></div>
+
+      <div class="relative z-10">
+        <div class="flex items-center gap-2 mb-6">
+          <span class="material-symbols-outlined text-[#E8C176]" data-icon="add_circle">add_circle</span>
+          <h2 class="text-xl md:text-2xl font-serif text-[#E5E2E1]">Create New Story</h2>
+        </div>
+
+        <form action="{% url 'add_story' %}" method="POST" enctype="multipart/form-data" class="space-y-6" id="createStoryForm">
+          {% csrf_token %}
+
+          <!-- Title -->
+          <div class="space-y-2">
+            <label class="text-xs tracking-widest text-[#D1C5B4] uppercase font-label">Story Title <span class="text-red-400">*</span></label>
+            <input type="text" name="title" id="storyTitleInput"
+                   class="w-full bg-[#2A2A2A] text-on-surface px-4 py-3 rounded text-sm outline-none border border-transparent focus:border-[#E8C176] transition"
+                   placeholder="e.g. Diwali Lighting Exhibition 2026" required />
+          </div>
+
+          <!-- Category -->
+          <div class="space-y-2">
+            <label class="text-xs tracking-widest text-[#D1C5B4] uppercase font-label">Category <span class="text-red-400">*</span></label>
+            <select name="category" id="storyCategorySelect"
+                    class="w-full bg-[#2A2A2A] text-[#E5E2E1] px-4 py-3 rounded text-sm outline-none border border-transparent focus:border-[#E8C176] transition">
+              <option value="announcement">Announcement</option>
+              <option value="festival">Festival</option>
+              <option value="event">Event</option>
+              <option value="general" selected>General Update</option>
+            </select>
+          </div>
+
+          <!-- Poster/Image Upload with Live Preview -->
+          <div class="space-y-2">
+            <label class="text-xs tracking-widest text-[#D1C5B4] uppercase font-label">Poster / Visual Image <span class="text-red-400">*</span></label>
+            <p class="text-[11px] text-[#9A8F80]">Supports JPG, JPEG, PNG, WebP (Max 10MB). High resolution recommended.</p>
+            
+            <div class="border-2 border-dashed border-[#4E4639] hover:border-[#E8C176] transition rounded-lg p-4 text-center cursor-pointer bg-[#201F1F]"
+                 id="uploadDropzone">
+              <input type="file" name="image" id="storyImageInput" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                     class="hidden" required />
+              
+              <div id="uploadPlaceholder" class="py-6 flex flex-col items-center justify-center gap-2">
+                <span class="material-symbols-outlined text-4xl text-[#E8C176]" data-icon="cloud_upload">cloud_upload</span>
+                <span class="text-xs text-[#E5E2E1] font-medium">Click to select image or drag & drop</span>
+                <span class="text-[10px] text-stone-500">JPG, PNG, or WebP</span>
+              </div>
+
+              <!-- Live Preview -->
+              <div id="imagePreviewContainer" class="hidden relative">
+                <img id="imagePreview" src="" alt="Story Preview" class="max-h-64 mx-auto rounded object-contain shadow-lg" />
+                <button type="button" id="removePreviewBtn" class="absolute top-2 right-2 bg-red-600/80 hover:bg-red-600 text-white p-1 rounded-full text-xs">
+                  <span class="material-symbols-outlined text-sm">close</span>
+                </button>
+                <p id="imageFileInfo" class="text-xs text-[#D1C5B4] mt-2"></p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Optional Description -->
+          <div class="space-y-2">
+            <label class="text-xs tracking-widest text-[#D1C5B4] uppercase font-label">Description / Caption (Optional)</label>
+            <textarea name="description" rows="3"
+                      class="w-full bg-[#2A2A2A] text-on-surface px-4 py-3 rounded text-sm outline-none border border-transparent focus:border-[#E8C176] transition"
+                      placeholder="Brief details or highlight caption visible in the viewer..."></textarea>
+          </div>
+
+          <!-- Status & Expiration Selection -->
+          <div class="space-y-2">
+            <label class="text-xs tracking-widest text-[#D1C5B4] uppercase font-label">Publication Mode</label>
+            <select name="status" id="storyStatusSelect"
+                    class="w-full bg-[#2A2A2A] text-[#E5E2E1] px-4 py-3 rounded text-sm outline-none border border-transparent focus:border-[#E8C176] transition">
+              <option value="published" selected>Publish Immediately (Active for 24h)</option>
+              <option value="draft">Save as Draft (Not public)</option>
+              <option value="scheduled">Schedule for Future Date/Time</option>
+            </select>
+            <p id="publishNotice" class="text-[11px] text-emerald-400">
+              ⚡ Will become immediately visible to visitors and expire exactly 24 hours from creation.
+            </p>
+          </div>
+
+          <!-- Scheduled Datetime Input (Shown only when status is scheduled) -->
+          <div class="space-y-2 hidden" id="scheduledField">
+            <label class="text-xs tracking-widest text-amber-300 uppercase font-label">Scheduled Date & Time <span class="text-red-400">*</span></label>
+            <input type="datetime-local" name="scheduled_at" id="scheduledAtInput"
+                   class="w-full bg-[#2A2A2A] text-[#E5E2E1] px-4 py-3 rounded text-sm outline-none border border-transparent focus:border-amber-400 transition" />
+            <p class="text-[11px] text-stone-400">Story will publish automatically at this time and expire 24 hours later.</p>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" id="submitStoryBtn"
+                  class="w-full py-3.5 text-xs font-label uppercase tracking-widest text-[#261900] font-bold rounded-md bg-gradient-to-br from-[#E8C176] to-[#C9A45C] hover:scale-[1.01] transition-transform duration-200 shadow-lg shadow-[#DDAD69]/10">
+            Publish Story Now
+          </button>
+        </form>
+      </div>
+    </div>
+
+
+    <!-- RIGHT: STORIES LIST -->
+    <div class="lg:col-span-7 bg-[#131313] p-6 md:p-8 rounded-lg border border-[#2A2A2A]">
+      <div class="flex justify-between items-center mb-6">
+        <div>
+          <h2 class="text-xl md:text-2xl font-serif text-[#E5E2E1]">All Stories</h2>
+          <p class="text-xs text-[#D1C5B4] mt-1">Showing {{ stories|length }} stories in archive</p>
+        </div>
+      </div>
+
+      {% if stories %}
+        <div class="space-y-4">
+          {% for story in stories %}
+            <div class="bg-[#1C1B1B] p-4 rounded-lg border border-[#2A2A2A] hover:border-[#4E4639] transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              
+              <!-- Story Poster & Details -->
+              <div class="flex items-start gap-4">
+                <!-- Poster Thumbnail with preview modal trigger -->
+                <div class="relative w-16 h-20 md:w-20 md:h-24 shrink-0 rounded overflow-hidden bg-black border border-stone-800 group">
+                  {% if story.image %}
+                    <img src="{{ story.image.url }}" alt="{{ story.title }}" class="w-full h-full object-cover group-hover:scale-110 transition duration-300" />
+                  {% else %}
+                    <div class="w-full h-full flex items-center justify-center text-stone-600">
+                      <span class="material-symbols-outlined text-lg">image</span>
+                    </div>
+                  {% endif %}
+                </div>
+
+                <div class="space-y-1">
+                  <!-- Category Pill -->
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <span class="text-[9px] uppercase tracking-widest font-label px-2 py-0.5 rounded font-semibold
+                      {% if story.category == 'announcement' %}bg-sky-950 text-sky-300 border border-sky-800
+                      {% elif story.category == 'festival' %}bg-amber-950 text-amber-300 border border-amber-800
+                      {% elif story.category == 'event' %}bg-purple-950 text-purple-300 border border-purple-800
+                      {% else %}bg-stone-800 text-stone-300 border border-stone-700{% endif %}">
+                      {{ story.get_category_display }}
+                    </span>
+
+                    <!-- Status Pill -->
+                    {% with st=story.computed_status %}
+                      {% if st == 'active' %}
+                        <span class="text-[9px] uppercase tracking-widest font-label px-2 py-0.5 rounded font-bold bg-emerald-950 text-emerald-300 border border-emerald-700 flex items-center gap-1">
+                          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                          Active • {{ story.time_remaining_display }}
+                        </span>
+                      {% elif st == 'draft' %}
+                        <span class="text-[9px] uppercase tracking-widest font-label px-2 py-0.5 rounded font-semibold bg-stone-800 text-stone-400 border border-stone-700">
+                          Draft (Unpublished)
+                        </span>
+                      {% elif st == 'scheduled' %}
+                        <span class="text-[9px] uppercase tracking-widest font-label px-2 py-0.5 rounded font-semibold bg-amber-950 text-amber-300 border border-amber-700">
+                          Scheduled for {{ story.scheduled_at|date:"M d, H:i" }}
+                        </span>
+                      {% elif st == 'expired' %}
+                        <span class="text-[9px] uppercase tracking-widest font-label px-2 py-0.5 rounded font-semibold bg-rose-950 text-rose-300 border border-rose-800">
+                          Expired
+                        </span>
+                      {% endif %}
+                    {% endwith %}
+                  </div>
+
+                  <!-- Title -->
+                  <h3 class="text-sm md:text-base font-semibold text-[#E5E2E1]">{{ story.title }}</h3>
+
+                  <!-- Metadata -->
+                  <div class="text-[11px] text-[#9A8F80] space-y-0.5">
+                    <p>Created: {{ story.created_at|date:"M d, Y H:i" }}</p>
+                    {% if story.published_at %}
+                      <p>Published: {{ story.published_at|date:"M d, Y H:i" }}</p>
+                    {% endif %}
+                    {% if story.expires_at %}
+                      <p class="{% if story.is_expired %}text-rose-400{% else %}text-[#E8C176]{% endif %}">
+                        Expires: {{ story.expires_at|date:"M d, Y H:i" }}
+                      </p>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Available Actions -->
+              <div class="flex items-center gap-2 self-end md:self-center mt-2 md:mt-0 flex-wrap">
+                <!-- Edit -->
+                <a href="{% url 'update_story' story.pk %}"
+                   class="px-3 py-1.5 text-xs text-[#E8C176] bg-[#2A2A2A] hover:bg-[#353534] rounded transition"
+                   title="Edit story details">
+                  Edit
+                </a>
+
+                <!-- Publish / Republish / Unpublish actions -->
+                {% if story.computed_status == 'active' %}
+                  <a href="{% url 'unpublish_story' story.pk %}"
+                     class="px-3 py-1.5 text-xs text-stone-300 bg-stone-800 hover:bg-stone-700 rounded transition"
+                     onclick="return confirm('Unpublish this story? It will immediately disappear from the public website.');"
+                     title="Unpublish immediately">
+                    Unpublish
+                  </a>
+                {% else %}
+                  <a href="{% url 'publish_story' story.pk %}"
+                     class="px-3 py-1.5 text-xs text-neutral-950 font-bold bg-[#E8C176] hover:bg-[#FFDEA4] rounded transition"
+                     onclick="return confirm('Publish this story now? It will become visible on the website and expire in exactly 24 hours.');"
+                     title="Publish/Republish with fresh 24h timer">
+                    {% if story.computed_status == 'expired' %}Republish (24h){% else %}Publish Now{% endif %}
+                  </a>
+                {% endif %}
+
+                <!-- Delete -->
+                <button type="button"
+                        onclick="confirmDeleteStory('{{ story.pk }}', '{{ story.title|escapejs }}')"
+                        class="px-3 py-1.5 text-xs text-rose-400 hover:text-white bg-rose-950/40 hover:bg-rose-900 border border-rose-900/60 rounded transition"
+                        title="Delete story permanently">
+                  Delete
+                </button>
+              </div>
+
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <!-- Empty State -->
+        <div class="text-center py-16 px-4 bg-[#1C1B1B] rounded-lg border border-dashed border-[#2A2A2A]">
+          <span class="material-symbols-outlined text-4xl text-stone-600 mb-3" data-icon="auto_stories">auto_stories</span>
+          <p class="text-base text-[#E5E2E1] font-serif">No stories found</p>
+          <p class="text-xs text-[#D1C5B4] mt-1 max-w-sm mx-auto">
+            {% if status_filter != 'all' %}
+              No stories match the "{{ status_filter }}" filter. Select another filter or create a new story.
+            {% else %}
+              Publish your first 24-hour announcement or festival poster using the form on the left.
+            {% endif %}
+          </p>
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+
+<!-- DELETE CONFIRMATION MODAL -->
+<div id="deleteConfirmModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <div class="bg-[#1C1B1B] border border-[#2A2A2A] rounded-lg max-w-md w-full p-6 space-y-4">
+    <div class="flex items-center gap-3 text-rose-400">
+      <span class="material-symbols-outlined text-2xl">warning</span>
+      <h3 class="text-lg font-serif text-[#E5E2E1]">Confirm Story Deletion</h3>
+    </div>
+    <p class="text-xs text-[#D1C5B4] leading-relaxed">
+      Are you sure you want to delete <span id="deleteStoryTitle" class="text-white font-semibold"></span>?
+      This action will remove the record and permanently delete the uploaded poster file from storage.
+    </p>
+    <div class="flex justify-end gap-3 pt-2">
+      <button type="button" onclick="closeDeleteModal()" class="px-4 py-2 text-xs text-[#D1C5B4] bg-[#2A2A2A] hover:bg-[#353534] rounded">
+        Cancel
+      </button>
+      <a id="deleteConfirmLink" href="#" class="px-4 py-2 text-xs text-white bg-rose-600 hover:bg-rose-500 rounded font-semibold">
+        Yes, Delete Story
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Dynamic handling of status dropdown & scheduling input
+  const statusSelect = document.getElementById('storyStatusSelect');
+  const scheduledField = document.getElementById('scheduledField');
+  const publishNotice = document.getElementById('publishNotice');
+  const submitBtn = document.getElementById('submitStoryBtn');
+
+  statusSelect.addEventListener('change', function() {
+    if (this.value === 'scheduled') {
+      scheduledField.classList.remove('hidden');
+      publishNotice.textContent = '⏰ Story will be held until the scheduled time, then stay active for 24 hours.';
+      publishNotice.className = 'text-[11px] text-amber-400';
+      submitBtn.textContent = 'Schedule Story';
+    } else if (this.value === 'draft') {
+      scheduledField.classList.add('hidden');
+      publishNotice.textContent = '📁 Saved in admin history only. Not visible to website visitors.';
+      publishNotice.className = 'text-[11px] text-stone-400';
+      submitBtn.textContent = 'Save Draft';
+    } else {
+      scheduledField.classList.add('hidden');
+      publishNotice.textContent = '⚡ Will become immediately visible to visitors and expire exactly 24 hours from creation.';
+      publishNotice.className = 'text-[11px] text-emerald-400';
+      submitBtn.textContent = 'Publish Story Now';
+    }
+  });
+
+  // Image Drag-and-drop & live preview
+  const dropzone = document.getElementById('uploadDropzone');
+  const fileInput = document.getElementById('storyImageInput');
+  const placeholder = document.getElementById('uploadPlaceholder');
+  const previewContainer = document.getElementById('imagePreviewContainer');
+  const previewImg = document.getElementById('imagePreview');
+  const fileInfo = document.getElementById('imageFileInfo');
+  const removeBtn = document.getElementById('removePreviewBtn');
+
+  dropzone.addEventListener('click', (e) => {
+    if (e.target !== removeBtn && !removeBtn.contains(e.target)) {
+      fileInput.click();
+    }
+  });
+
+  ['dragenter', 'dragover'].forEach(eventName => {
+    dropzone.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      dropzone.classList.add('border-[#E8C176]');
+    });
+  });
+
+  ['dragleave', 'drop'].forEach(eventName => {
+    dropzone.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('border-[#E8C176]');
+    });
+  });
+
+  dropzone.addEventListener('drop', (e) => {
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      fileInput.files = e.dataTransfer.files;
+      handleFileSelected(fileInput.files[0]);
+    }
+  });
+
+  fileInput.addEventListener('change', function() {
+    if (this.files && this.files[0]) {
+      handleFileSelected(this.files[0]);
+    }
+  });
+
+  function handleFileSelected(file) {
+    const validExtensions = ['image/jpeg', 'image/png', 'image/webp'];
+    const maxBytes = 10 * 1024 * 1024; // 10MB
+
+    if (!validExtensions.includes(file.type) && !file.name.match(/\.(jpg|jpeg|png|webp)$/i)) {
+      alert('Please select a JPG, JPEG, PNG, or WebP image file.');
+      fileInput.value = '';
+      return;
+    }
+
+    if (file.size > maxBytes) {
+      alert('Selected file size exceeds 10MB. Please choose a smaller image.');
+      fileInput.value = '';
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      previewImg.src = e.target.result;
+      fileInfo.textContent = `${file.name} (${(file.size / (1024*1024)).toFixed(2)} MB)`;
+      placeholder.classList.add('hidden');
+      previewContainer.classList.remove('hidden');
+    };
+    reader.readAsDataURL(file);
+  }
+
+  removeBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    fileInput.value = '';
+    previewImg.src = '';
+    previewContainer.classList.add('hidden');
+    placeholder.classList.remove('hidden');
+  });
+
+  // Delete modal
+  function confirmDeleteStory(id, title) {
+    const modal = document.getElementById('deleteConfirmModal');
+    const titleEl = document.getElementById('deleteStoryTitle');
+    const link = document.getElementById('deleteConfirmLink');
+    titleEl.textContent = `"${title}"`;
+    link.href = `/stories/delete/${id}/`;
+    modal.classList.remove('hidden');
+  }
+
+  function closeDeleteModal() {
+    document.getElementById('deleteConfirmModal').classList.add('hidden');
+  }
+</script>
+{% endblock %}

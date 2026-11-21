@@ -1,0 +1,225 @@
+{% extends 'base.html' %}
+{% block title %}Edit Story | Momentorso Admin{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-[#0E0E0E] text-[#E5E2E1] p-6 md:p-12 lg:p-16 pt-28 md:pt-32">
+
+  <!-- Breadcrumb -->
+  <div class="mb-10">
+    <div class="flex items-center gap-3 mb-2">
+      <a href="{% url 'manage_stories' %}" class="text-xs text-[#D1C5B4] hover:text-[#E8C176] tracking-widest uppercase transition flex items-center gap-1 font-label">
+        <span class="material-symbols-outlined text-sm">arrow_back</span> Back to Stories
+      </a>
+      <span class="text-stone-600">/</span>
+      <span class="text-xs text-[#E8C176] tracking-widest uppercase font-label">Edit Story</span>
+    </div>
+    <h1 class="text-3xl md:text-4xl font-serif">Edit Story: {{ story.title }}</h1>
+    <p class="text-xs md:text-sm text-[#D1C5B4] mt-2 tracking-wide">
+      Update story details, replace poster visual, or republish with a fresh 24-hour cycle.
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start max-w-6xl">
+
+    <!-- EDIT FORM -->
+    <div class="lg:col-span-8 bg-[#1C1B1B] p-6 md:p-10 rounded-lg relative border border-[#2A2A2A]">
+      <div class="absolute inset-0 bg-[#DDAD69] opacity-[0.03] blur-3xl pointer-events-none"></div>
+
+      <form action="{% url 'update_story' story.pk %}" method="POST" enctype="multipart/form-data" class="relative z-10 space-y-6" id="editStoryForm">
+        {% csrf_token %}
+
+        <!-- Title -->
+        <div class="space-y-2">
+          <label class="text-xs tracking-widest text-[#D1C5B4] uppercase font-label">Story Title <span class="text-red-400">*</span></label>
+          <input type="text" name="title" value="{{ story.title }}"
+                 class="w-full bg-[#2A2A2A] text-on-surface px-4 py-3 rounded text-sm outline-none border border-transparent focus:border-[#E8C176] transition"
+                 required />
+        </div>
+
+        <!-- Category -->
+        <div class="space-y-2">
+          <label class="text-xs tracking-widest text-[#D1C5B4] uppercase font-label">Category</label>
+          <select name="category"
+                  class="w-full bg-[#2A2A2A] text-[#E5E2E1] px-4 py-3 rounded text-sm outline-none border border-transparent focus:border-[#E8C176] transition">
+            {% for code, label in categories %}
+              <option value="{{ code }}" {% if story.category == code %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Current & Replace Poster Image -->
+        <div class="space-y-3">
+          <label class="text-xs tracking-widest text-[#D1C5B4] uppercase font-label">Story Poster Image</label>
+          
+          <div class="flex flex-col sm:flex-row items-start gap-6 bg-[#201F1F] p-4 rounded-lg border border-[#2A2A2A]">
+            <!-- Current Image -->
+            <div class="shrink-0 text-center">
+              <p class="text-[10px] text-stone-400 uppercase tracking-wider mb-2">Current Poster</p>
+              {% if story.image %}
+                <img src="{{ story.image.url }}" alt="{{ story.title }}" class="w-28 h-36 object-cover rounded shadow border border-stone-700 mx-auto" />
+              {% else %}
+                <div class="w-28 h-36 bg-black flex items-center justify-center text-stone-600 rounded">No Image</div>
+              {% endif %}
+            </div>
+
+            <!-- Upload Replacement -->
+            <div class="flex-1 space-y-2">
+              <p class="text-xs text-[#E5E2E1] font-medium">Replace Visual (Optional)</p>
+              <p class="text-[11px] text-stone-400">Select a new JPG, PNG, or WebP (max 10MB) to replace the current image, or leave blank to keep it.</p>
+              <input type="file" name="image" id="editImageInput" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                     class="w-full bg-[#2A2A2A] text-xs text-[#D1C5B4] file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-[#E8C176] file:text-[#261900] hover:file:bg-[#FFDEA4]" />
+              <div id="newPreviewContainer" class="hidden pt-2">
+                <p class="text-[10px] text-[#E8C176] uppercase tracking-wider mb-1">New Image Preview:</p>
+                <img id="newImagePreview" src="" alt="New Preview" class="max-h-32 rounded object-contain border border-[#E8C176]/40" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="space-y-2">
+          <label class="text-xs tracking-widest text-[#D1C5B4] uppercase font-label">Description / Caption (Optional)</label>
+          <textarea name="description" rows="3"
+                    class="w-full bg-[#2A2A2A] text-on-surface px-4 py-3 rounded text-sm outline-none border border-transparent focus:border-[#E8C176] transition">{{ story.description }}</textarea>
+        </div>
+
+        <!-- Status -->
+        <div class="space-y-2">
+          <label class="text-xs tracking-widest text-[#D1C5B4] uppercase font-label">Status</label>
+          <select name="status" id="editStatusSelect"
+                  class="w-full bg-[#2A2A2A] text-[#E5E2E1] px-4 py-3 rounded text-sm outline-none border border-transparent focus:border-[#E8C176] transition">
+            <option value="published" {% if story.status == 'published' %}selected{% endif %}>Published</option>
+            <option value="draft" {% if story.status == 'draft' %}selected{% endif %}>Draft (Unpublished)</option>
+            <option value="scheduled" {% if story.status == 'scheduled' %}selected{% endif %}>Scheduled</option>
+          </select>
+        </div>
+
+        <!-- Scheduled Datetime Input -->
+        <div class="space-y-2 {% if story.status != 'scheduled' %}hidden{% endif %}" id="editScheduledField">
+          <label class="text-xs tracking-widest text-amber-300 uppercase font-label">Scheduled Date & Time</label>
+          <input type="datetime-local" name="scheduled_at"
+                 value="{{ story.scheduled_at|date:'Y-m-d\TH:i' }}"
+                 class="w-full bg-[#2A2A2A] text-[#E5E2E1] px-4 py-3 rounded text-sm outline-none border border-transparent focus:border-amber-400 transition" />
+        </div>
+
+        <!-- Hidden input for action button differentiation -->
+        <input type="hidden" name="action" id="actionField" value="save" />
+
+        <!-- Action Buttons -->
+        <div class="pt-6 border-t border-[#2A2A2A] flex flex-col sm:flex-row items-center gap-4">
+          <!-- Save Changes -->
+          <button type="submit" onclick="document.getElementById('actionField').value='save'"
+                  class="w-full sm:w-auto px-6 py-3 text-xs font-label uppercase tracking-widest text-[#261900] font-bold rounded bg-gradient-to-br from-[#E8C176] to-[#C9A45C] hover:scale-[1.01] transition shadow">
+            Save Changes (Keep Expiration)
+          </button>
+
+          <!-- Republish (Reset 24h) -->
+          <button type="submit" onclick="document.getElementById('actionField').value='republish'"
+                  class="w-full sm:w-auto px-6 py-3 text-xs font-label uppercase tracking-widest text-emerald-300 font-bold rounded bg-emerald-950 hover:bg-emerald-900 border border-emerald-700 transition">
+            ⚡ Republish Now (Reset 24h Clock)
+          </button>
+
+          {% if story.computed_status == 'active' %}
+            <button type="submit" onclick="document.getElementById('actionField').value='unpublish'"
+                    class="w-full sm:w-auto px-4 py-3 text-xs font-label uppercase tracking-widest text-stone-300 rounded bg-stone-800 hover:bg-stone-700 transition">
+              Unpublish
+            </button>
+          {% endif %}
+
+          <a href="{% url 'manage_stories' %}" class="w-full sm:w-auto text-center px-4 py-3 text-xs text-[#D1C5B4] hover:text-white transition">
+            Cancel
+          </a>
+        </div>
+      </form>
+    </div>
+
+    <!-- SIDEBAR: STORY LIFECYCLE INFO -->
+    <div class="lg:col-span-4 space-y-6">
+      
+      <!-- Lifecycle Card -->
+      <div class="bg-[#1C1B1B] p-6 rounded-lg border border-[#2A2A2A] space-y-4">
+        <h3 class="text-sm font-label uppercase tracking-widest text-[#E8C176] font-semibold">Story Lifecycle</h3>
+
+        <div class="space-y-3 text-xs">
+          <div class="flex justify-between py-1 border-b border-stone-800">
+            <span class="text-stone-400">Current Status:</span>
+            <span class="font-semibold
+              {% if story.computed_status == 'active' %}text-emerald-400
+              {% elif story.computed_status == 'expired' %}text-rose-400
+              {% elif story.computed_status == 'scheduled' %}text-amber-400
+              {% else %}text-stone-300{% endif %}">
+              {{ story.computed_status|title }}
+            </span>
+          </div>
+
+          <div class="flex justify-between py-1 border-b border-stone-800">
+            <span class="text-stone-400">Time Remaining:</span>
+            <span class="font-medium text-[#E5E2E1]">{{ story.time_remaining_display|default:"N/A" }}</span>
+          </div>
+
+          <div class="flex justify-between py-1 border-b border-stone-800">
+            <span class="text-stone-400">Created:</span>
+            <span class="text-stone-300">{{ story.created_at|date:"M d, Y H:i" }}</span>
+          </div>
+
+          <div class="flex justify-between py-1 border-b border-stone-800">
+            <span class="text-stone-400">Published:</span>
+            <span class="text-stone-300">{{ story.published_at|date:"M d, Y H:i"|default:"Not yet" }}</span>
+          </div>
+
+          <div class="flex justify-between py-1 border-b border-stone-800">
+            <span class="text-stone-400">Expires:</span>
+            <span class="{% if story.is_expired %}text-rose-400{% else %}text-[#E8C176]{% endif %}">
+              {{ story.expires_at|date:"M d, Y H:i"|default:"Not set" }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Expiration Rule Note -->
+      <div class="bg-[#131313] p-5 rounded-lg border border-[#DDAD69]/20 text-xs space-y-2">
+        <div class="flex items-center gap-2 text-[#E8C176]">
+          <span class="material-symbols-outlined text-sm">info</span>
+          <span class="font-semibold uppercase tracking-wider text-[11px] font-label">24-Hour Policy Rule</span>
+        </div>
+        <p class="text-[#D1C5B4] leading-relaxed">
+          Editing active story content will <strong>never silently extend</strong> its 24-hour lifetime. The original expiration countdown stays intact.
+        </p>
+        <p class="text-[#D1C5B4] leading-relaxed">
+          If you wish to grant this story a brand new 24-hour cycle starting right now, click the green <strong>"Republish Now"</strong> button.
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const statusSelect = document.getElementById('editStatusSelect');
+  const scheduledField = document.getElementById('editScheduledField');
+  statusSelect.addEventListener('change', function() {
+    if (this.value === 'scheduled') {
+      scheduledField.classList.remove('hidden');
+    } else {
+      scheduledField.classList.add('hidden');
+    }
+  });
+
+  const fileInput = document.getElementById('editImageInput');
+  const previewContainer = document.getElementById('newPreviewContainer');
+  const previewImg = document.getElementById('newImagePreview');
+
+  fileInput.addEventListener('change', function() {
+    if (this.files && this.files[0]) {
+      const file = this.files[0];
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        previewImg.src = e.target.result;
+        previewContainer.classList.remove('hidden');
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+</script>
+{% endblock %}

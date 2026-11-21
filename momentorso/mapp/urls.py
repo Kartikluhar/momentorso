@@ -33,4 +33,16 @@ urlpatterns = [
     # For Inquiries
     path('inquiry/', views.inquiry, name='inquiry'),
     path('delete-inquiry/<int:pk>/', views.delete_inquiry, name='delete_inquiry'),
+
+    # Public Stories API
+    path('api/stories/', views.api_active_stories, name='api_active_stories'),
+    path('api/stories/<int:pk>/', views.api_story_detail, name='api_story_detail'),
+
+    # For Stories Management (Admin)
+    path('stories/', views.manage_stories, name='manage_stories'),
+    path('stories/add/', views.add_story, name='add_story'),
+    path('stories/update/<int:pk>/', views.update_story, name='update_story'),
+    path('stories/publish/<int:pk>/', views.publish_story, name='publish_story'),
+    path('stories/unpublish/<int:pk>/', views.unpublish_story, name='unpublish_story'),
+    path('stories/delete/<int:pk>/', views.delete_story, name='delete_story'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
